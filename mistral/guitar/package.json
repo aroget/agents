@@ -1,0 +1,26 @@
+{
+  "name": "guitar-teacher-agent",
+  "version": "1.0.0",
+  "description": "A Mistral AI guitar teacher agent for blues and rock techniques",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "keywords": [
+    "mistral",
+    "ai",
+    "guitar",
+    "teacher",
+    "blues",
+    "rock"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.20.0",
+  "dependencies": {
+    "@mistralai/mistralai": "^1.14.0",
+    "dotenv": "^17.3.1"
+  }
+}
