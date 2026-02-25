@@ -1,0 +1,25 @@
+# Logs - ignore anywhere
+logs/
+*.log
+log.txt
+
+# Dependencies - ignore anywhere  
+node_modules
+node_modules/
+**/node_modules
+**/node_modules/**
+pnpm-lock.yaml
+**/pnpm-lock.yaml
+
+# Environment files - ignore anywhere
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
