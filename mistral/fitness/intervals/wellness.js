@@ -20,7 +20,7 @@ export async function fetchFullData() {
 
   // Define Endpoints
   const activitiesUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/activities?newest=${today}&oldest=${twoWeeksAgo}`;
-  const wellnessUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/wellness/${today}`;
+  const wellnessUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/wellness.json?newest=${today}&oldest=${twoWeeksAgo}`;
 
   try {
     console.log("Fetching data from Intervals.icu...");
@@ -35,24 +35,27 @@ export async function fetchFullData() {
 
     const activities = await actRes.json();
 
-    let wellness = "No wellness data logged today";
+    let wellness = [];
     if (wellRes.ok) {
       wellness = await wellRes.json();
+      console.log(`✅ Fetched ${wellness.length} days of wellness data`);
     } else {
-      console.log(`No wellness data for ${today} (${wellRes.status})`);
+      console.log(`❌ Failed to fetch wellness data (${wellRes.status})`);
     }
 
-    const dailySnapshot = {
-      date: today,
-      workouts: activities,
-      recovery: wellness,
+    const twoWeekSnapshot = {
+      period: `${twoWeeksAgo} to ${today}`,
+      activities: activities,
+      wellness: wellness,
     };
 
-    const filePath = path.join(DOWNLOAD_DIR, `daily_${today}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(dailySnapshot, null, 2));
+    const filePath = path.join(DOWNLOAD_DIR, `training_${today}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(twoWeekSnapshot, null, 2));
 
-    console.log("Data fetched and saved successfully.");
-    return dailySnapshot;
+    console.log(
+      "✅ Two weeks of training and wellness data fetched successfully.",
+    );
+    return twoWeekSnapshot;
   } catch (error) {
     console.error("Data Pull Failed:", error.message);
   }
