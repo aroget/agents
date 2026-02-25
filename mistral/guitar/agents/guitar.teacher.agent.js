@@ -5,7 +5,7 @@ const { profile } = config;
 export default async (client) => {
   // Start the application
   const agent = await client.beta.agents.create({
-    name: "TrueFire Guitar Teacher Pro",
+    name: "Guitar Teacher Pro",
     model: "mistral-large-latest",
     description:
       "A high-level Blues and Rock guitar mentor for intermediate electric guitarists. Specializes in technical precision, fretboard visualization (CAGED/Pentatonics), and structured practice routines. Focuses on timing, muting, and expressive techniques like bending, moving beyond song-learning into true mastery.",

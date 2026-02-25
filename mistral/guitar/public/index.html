@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎸 Guitar Teacher Pro</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>🎸 Guitar Teacher Pro</h1>
+        <p class="tagline">Your AI Blues & Rock Guitar Mentor</p>
+      </header>
+
+      <div class="chat-container">
+        <div id="messages" class="messages">
+          <div class="message teacher-message">
+            <div class="message-content">
+              <div class="loading" id="initial-loading">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <div class="input-container">
+            <textarea
+              id="user-input"
+              placeholder="Ask about guitar techniques, request exercises, or share your playing for feedback..."
+              disabled
+            ></textarea>
+            <button id="send-btn" disabled>Send</button>
+          </div>
+          <div class="input-hint">
+            💡 Try: "Show me a blues scale exercise" or "Help with string
+            muting"
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

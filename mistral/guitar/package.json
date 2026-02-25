@@ -1,12 +1,17 @@
 {
   "name": "guitar-teacher-agent",
   "version": "1.0.0",
-  "description": "A Mistral AI guitar teacher agent for blues and rock techniques",
+  "description": "A Mistral AI guitar teacher agent with web interface",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "api:dev": "cd api && node index.js",
+    "api:install": "cd api && npm install",
+    "web:serve": "cd public && npx http-server -p 3001",
+    "deploy:vercel": "vercel deploy --prod",
+    "deploy:api": "cd api && vercel deploy --prod"
   },
   "keywords": [
     "mistral",
@@ -14,7 +19,8 @@
     "guitar",
     "teacher",
     "blues",
-    "rock"
+    "rock",
+    "web-interface"
   ],
   "author": "",
   "license": "ISC",
