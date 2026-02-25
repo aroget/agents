@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "api:dev": "cd api && node index.js",
+    "api:dev": "cd api && npm run dev",
     "api:install": "cd api && npm install",
     "web:serve": "cd public && npx http-server -p 3001",
     "deploy:vercel": "vercel deploy --prod",
