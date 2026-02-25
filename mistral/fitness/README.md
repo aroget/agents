@@ -5,7 +5,7 @@ An automated fitness coaching system that analyzes your training data from inter
 ## Features
 
 - 🤖 **AI-Powered Analysis**: Uses Mistral's large language model to analyze training data
-- 📊 **Intervals.icu Integration**: Fetches workout and wellness data automatically  
+- 📊 **Intervals.icu Integration**: Fetches workout and wellness data automatically
 - 🏃‍♂️ **Polarized Training Focus**: Implements Stephen Seiler's 80/20 training philosophy
 - 📝 **Automated Feedback**: Posts coaching analysis directly to your intervals.icu calendar
 - ⚡ **Recovery Monitoring**: Analyzes HRV, RHR, sleep quality, and training load
@@ -23,21 +23,18 @@ An automated fitness coaching system that analyzes your training data from inter
 ### Installation
 
 1. **Clone and navigate to the project**:
+
    ```bash
    cd /path/to/your/project
    ```
 
 2. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
 
-3. **Create environment file**:
-   ```bash
-   cp .env.example .env
-   ```
-
-4. **Configure environment variables** (see below)
+3. **Configure environment variables** (see below)
 
 ### Environment Variables
 
@@ -52,17 +49,19 @@ ATHLETE_ID=your_athlete_id
 API_KEY=your_intervals_api_key
 
 # Data Storage
-DOWNLOAD_DIR=./training
+DOWNLOAD_DIR=./training # location to dump the training data
 ```
 
 #### Getting Your API Keys
 
 **Mistral AI API Key**:
+
 1. Sign up at [mistral.ai](https://mistral.ai)
 2. Navigate to API section in your dashboard
 3. Generate a new API key
 
 **Intervals.icu API**:
+
 1. Log into your intervals.icu account
 2. Go to Settings → Developer → API Key
 3. Your athlete ID is in the URL: `intervals.icu/athlete/i123456` (use `i123456`)
@@ -76,6 +75,7 @@ node index.js
 ```
 
 The system will:
+
 1. ✅ Create a Mistral AI agent with coaching instructions
 2. 📥 Fetch your last 2 weeks of training data from intervals.icu
 3. 🧠 Analyze your training load, recovery metrics, and efficiency trends
@@ -102,12 +102,13 @@ fitness/
 ├── training/               # Local data storage (auto-created)
 ├── package.json
 ├── .env                    # Environment variables
+├── config.js.              # General config, like athlete profile, etc
 └── README.md
 ```
 
 ## Athlete Profile
 
-The coach is configured for an athlete profile in `index.js`:
+The coach is configured for an athlete profile defined in `config.js`:
 
 ```javascript
 const athleteProfile = {
@@ -116,8 +117,8 @@ const athleteProfile = {
   cycling_ftp: 250,
   running_threshold: "4:52", // min/km
   max_hr: 190,
-  rhr: 49,      // resting heart rate
-  hrv: 80,      // heart rate variability baseline
+  rhr: 49, // resting heart rate
+  hrv: 80, // heart rate variability baseline
 };
 ```
 
@@ -138,19 +139,73 @@ The AI coach implements **Stephen Seiler's Polarized Training Model**:
 The AI coach posts structured analysis to your calendar:
 
 ```
-📅 2026-02-24 | Training Status: Recovered | Readiness: 8/10
+---
+
+**Wednesday, February 25, 2026**
+
+**Readiness Score:** 7/10
+
+**Readiness Description:**
+You are in a recovery phase following a high-load week. HRV is stable, and RHR is within baseline, but yesterday's low training load and recent fatigue accumulation suggest a need for continued recovery focus. Today is about maintaining movement without adding stress.
+
+---
+
+## Yesterday Session Analysis
+
+**Session:** Easy Ride (2026-02-24)
+- **Duration:** 1h00m
+- **TSS:** 30, **IF:** 0.54
+- **Time in Zones:** Z1: 53.6%, Z2: 45.3%, Z3: 1.1%
+- **Efficiency Factor (EF):** 1.12, **Power/HR:** 1.09
+- **Decoupling:** 6.3%
+
+**Compliance:**
+- The session was appropriately easy, with 98.9% of the ride in Z1-Z2, aligning well with polarized training principles. No "black hole" training detected.
+
+---
 
 ## The Problem
-- Zone 2 "Black Hole" detected: 25% of weekly volume in threshold zone
-- Efficiency Factor declining despite stable CTL
-- HRV 15% below 7-day average
 
-## The Prescription  
-- Next 3 days: Zone 1 only (HR <138 bpm)
-- Saturday: 4x8min intervals @ 285W
-- Skip tempo work until EF improves
+- **Fatigue Accumulation:** ATL (Acute Training Load) remains elevated at 44, despite a planned recovery day. This suggests residual fatigue from the previous week's high volume.
+- **HRV Stability:** HRV is within normal range (84 ms), but the trend shows fluctuation over the past week, indicating some autonomic stress.
+- **Reduced Training Load:** Yesterday's TSS of 30 is low, but the lack of complete rest days in the last two weeks may be contributing to lingering fatigue.
+- **Sleep Quality:** Sleep score has been variable, with a dip to 70 on 2026-02-21, which may have impacted recovery.
 
-🚴‍♂️ Today's Workout: 90min Zone 1 ride (60% Z1, HR cap 140bpm)
+---
+
+## The Prescription
+
+- **Today's Workout:**
+  - **Session:** Z1 Recovery Run
+  - **Duration:** 45-60 minutes
+  - **Intensity:** Strictly Z1 (<138 bpm, <75% Max HR)
+  - **Focus:** Maintain easy pace, prioritize form, and avoid any surges into Z2. This is about active recovery, not fitness gains.
+
+- **Recovery Actions:**
+  - **Sleep:** Aim for >8 hours. Monitor sleep quality and consistency.
+  - **Nutrition:** Ensure adequate carbohydrate intake to replenish glycogen stores, and prioritize protein for muscle repair.
+  - **Hydration:** Maintain hydration levels, especially given the indoor training sessions.
+
+- **Next 48hrs:**
+  - **Monitor HRV/RHR:** If HRV drops >10% below your 7-day average or RHR rises >5 bpm, take an unplanned rest day.
+  - **Avoid Intensity:** No Z3+ efforts until ATL drops below 40 and HRV stabilizes above 85 ms.
+  - **Mobility Work:** Incorporate 10-15 minutes of daily mobility/stretching to aid recovery.
+
+---
+
+## Key Metrics Summary
+
+| Metric               | Current Value | Trend/Notes                                  |
+|----------------------|---------------|----------------------------------------------|
+| **CTL (Fitness)**    | 45.9          | Slight decline; expected during recovery.    |
+| **ATL (Fatigue)**    | 44.4          | Elevated; needs monitoring.                  |
+| **TSB (Form)**       | +1.5          | Positive; indicates recovery is underway.    |
+| **HRV**              | 84 ms         | Stable but variable; watch for downward trend.|
+| **RHR**              | 49 bpm        | Within baseline; no red flags.               |
+| **Sleep Score**      | 87            | Improved; maintain consistency.              |
+| **Weekly Z1/Z2/Z3**  | 80/19/1       | Polarized distribution is on point.          |
+
+---
 ```
 
 ## API Integration
@@ -172,14 +227,17 @@ The AI coach posts structured analysis to your calendar:
 ### Common Issues
 
 **"No wellness data found"**
+
 - Check that you're logging HRV, sleep, or other wellness metrics in intervals.icu
 - Ensure the date format matches your timezone
 
-**"API authentication failed"**  
+**"API authentication failed"**
+
 - Verify your intervals.icu API key in Settings → Developer
 - Check that ATHLETE_ID matches your intervals.icu URL
 
 **"Mistral API error"**
+
 - Confirm your Mistral API key is valid and has credits
 - Check the Mistral API status page for outages
 
@@ -208,8 +266,9 @@ const additionalMetrics = {
 ### Customizing Coaching Style
 
 Edit the agent instructions in `getOrCreateAgent()` to modify:
+
 - Feedback tone (currently blunt/scientific)
-- Training philosophy  
+- Training philosophy
 - Analysis focus areas
 - Output formatting
 
@@ -226,4 +285,4 @@ MIT License - feel free to modify and adapt for your training needs.
 
 ---
 
-*Built for endurance athletes who want data-driven, no-nonsense coaching feedback.*
+_Built for endurance athletes who want data-driven, no-nonsense coaching feedback._
