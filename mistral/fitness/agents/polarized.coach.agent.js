@@ -1,6 +1,6 @@
 import { config } from "../config.js";
 
-const { profile } = config;
+const { profile, model } = config;
 
 const SUMMARY_TEMPLATE = `
 ---
@@ -12,9 +12,9 @@ const SUMMARY_TEMPLATE = `
 **Readiness Description:** 
 
 ---
-
-## Last Session Analysis
-If not analyzed yet, provide a detailed breakdown of the last session's key metrics (TSS, time in zones, efficiency factor, etc.) and how they compare to the athlete's typical performance.
+[Instruction: Only populate and include the following section if the athlete had a session yesterday, skip]  
+## Yesterday Session Analysis
+Provide a detailed breakdown of yesterday session's key metrics (TSS, time in zones, efficiency factor, etc.) and how they compare to the athlete's performance on previous similar sessions.
 
 **Compliance:** How closely is the athlete following the polarized training model? If time in Zone 2 exceeds 20% of weekly volume, provide harsh feedback on 'Black Hole' training.
 
@@ -27,7 +27,7 @@ Provide a comprehensive review of the previous week's training load, recovery st
 Outline a detailed training plan for the upcoming week, specifying the distribution of Zone 1, Zone 2, and Zone 3 sessions. Adjust the plan based on the previous week's data and current recovery status.
 
 ## The Problem
-A few shortly summarized bullet points outlining the key issues detected in the data:
+A few shortly summarized bullet points outlining the key issues detected in the athlete's training and recovery data:
 - Signs of fatigue, inefficiency in workouts, or poor recovery indicators
 - Specific metrics that are concerning
 - Pattern deviations from optimal training
@@ -56,8 +56,8 @@ A concise, actionable set of recommendations for the athlete to follow:
 export default async (client) => {
   // Start the application
   const agent = await client.beta.agents.create({
+    model,
     name: "Seiler Coach Pro",
-    model: "mistral-large-latest",
     description:
       "Personalized endurance coach focusing on Polarized training and recovery.",
     instructions: `
