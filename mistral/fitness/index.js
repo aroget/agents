@@ -6,7 +6,7 @@ import { postNoteToIntervals } from "./intervals/add-note.js";
 
 import polarizedCoachAgent from "./agents/polarized.coach.agent.js";
 
-dotenv.config({ silent: true });
+dotenv.config({ quiet: true });
 
 const apiKey = process.env.MISTRAL_API_KEY;
 const client = new Mistral({ apiKey: apiKey });

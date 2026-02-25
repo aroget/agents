@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 
-dotenv.config({ silent: true });
+dotenv.config({ quiet: true });
 
 // --- CONFIGURATION ---
 const ATHLETE_ID = process.env.ATHLETE_ID;

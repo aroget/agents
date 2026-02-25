@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 
-dotenv.config({ silent: true });
+dotenv.config({ quiet: true });
 
 export async function postNoteToIntervals(noteContent) {
   console.log("Adding note to Intervals.icu calendar...");
