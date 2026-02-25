@@ -84,12 +84,88 @@ The system will:
 
 ### Automation
 
-You can automate daily coaching by setting up a cron job:
+You can automate daily coaching using either GitHub Actions (recommended) or local cron jobs:
+
+#### Option 1: GitHub Actions (Recommended)
+
+**Advantages**: Free hosting, reliable execution, no local machine dependency, version control integration.
+
+1. **Create GitHub workflow file** `.github/workflows/daily-coaching.yml`:
+
+```yaml
+name: Daily AI Fitness Coaching
+
+on:
+  schedule:
+    # Run every day at 8:00 AM UTC (adjust timezone as needed)
+    - cron: "0 8 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  coaching:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run AI Coaching
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          ATHLETE_ID: ${{ secrets.ATHLETE_ID }}
+          API_KEY: ${{ secrets.INTERVALS_API_KEY }}
+          DOWNLOAD_DIR: ./training
+        run: node index.js
+```
+
+2. **Configure Repository Secrets**:
+
+   Go to your GitHub repository → Settings → Secrets and variables → Actions, then add:
+   - `MISTRAL_API_KEY`: Your Mistral AI API key
+   - `ATHLETE_ID`: Your intervals.icu athlete ID (e.g., `i123456`)
+   - `INTERVALS_API_KEY`: Your intervals.icu API key
+
+3. **Test the workflow**:
+   - Go to Actions tab in your GitHub repository
+   - Select "Daily AI Fitness Coaching"
+   - Click "Run workflow" to test manually
+   - Check the logs to ensure it runs successfully
+
+4. **Customize schedule**:
+   - Modify the cron expression in the workflow file
+   - Use [crontab.guru](https://crontab.guru) to generate custom schedules
+   - Remember GitHub Actions uses UTC time
+
+#### Option 2: Local Cron Job
+
+**Advantages**: Full control, no external dependencies, immediate execution.
 
 ```bash
-# Run every day at 8 AM
-0 8 * * * cd /path/to/project && node index.js
+# Edit your crontab
+crontab -e
+
+# Add this line to run every day at 8 AM local time
+0 8 * * * cd /path/to/your/fitness/project && node index.js >> ~/coaching.log 2>&1
 ```
+
+#### Timezone Considerations
+
+- **GitHub Actions**: Runs in UTC timezone
+- **Local Cron**: Uses your system's timezone
+- Adjust the cron schedule accordingly for your preferred coaching time
 
 ## Project Structure
 
