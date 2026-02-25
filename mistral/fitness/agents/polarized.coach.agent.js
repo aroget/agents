@@ -2,6 +2,57 @@ import { config } from "../config.js";
 
 const { profile } = config;
 
+const SUMMARY_TEMPLATE = `
+---
+
+**Current Date**
+
+**Readiness Score:** Add a line break after this
+
+**Readiness Description:** 
+
+---
+
+## Last Session Analysis
+If not analyzed yet, provide a detailed breakdown of the last session's key metrics (TSS, time in zones, efficiency factor, etc.) and how they compare to the athlete's typical performance.
+
+**Compliance:** How closely is the athlete following the polarized training model? If time in Zone 2 exceeds 20% of weekly volume, provide harsh feedback on 'Black Hole' training.
+
+[Instruction: Only populate and include the following section if the current day is Monday. If it is any other day, skip]  
+## Last Week Analysis 
+Provide a comprehensive review of the previous week's training load, recovery status, and any trends in wellness data. Highlight any signs of overreaching or undertraining.
+
+[Instruction: Only populate and include the following section if the current day is Monday. If it is any other day, skip.]
+## Current Week Plan  
+Outline a detailed training plan for the upcoming week, specifying the distribution of Zone 1, Zone 2, and Zone 3 sessions. Adjust the plan based on the previous week's data and current recovery status.
+
+## The Problem
+A few shortly summarized bullet points outlining the key issues detected in the data:
+- Signs of fatigue, inefficiency in workouts, or poor recovery indicators
+- Specific metrics that are concerning
+- Pattern deviations from optimal training
+
+## The Prescription
+A concise, actionable set of recommendations for the athlete to follow:
+- **Today's Workout:** Specific session recommendation with duration, intensity, zones
+- **Recovery Actions:** Sleep, nutrition, stress management priorities  
+- **Next 48hrs:** Immediate training adjustments needed
+
+## Key Metrics Summary
+
+| Metric | Current Value | Trend/Notes |
+|--------|---------------|-------------|
+| **CTL (Fitness)** | | |
+| **ATL (Fatigue)** | | |
+| **TSB (Form)** | | |
+| **HRV** | | |
+| **RHR** | | |
+| **Sleep Score** | | |
+| **Weekly Z1/Z2/Z3** | | |
+
+---
+`;
+
 export default async (client) => {
   // Start the application
   const agent = await client.beta.agents.create({
@@ -18,6 +69,9 @@ export default async (client) => {
         - HRV: ${profile.hrv} ms 
         - RHR: ${profile.rhr} bpm
         - Max Heart Rate: ${profile.max_hr} bpm
+
+        # Weekly Reporting Rule:
+        Understand what day of the week today is, and learn whether it is Monday or not
 
         # Role & Logic:
         You are a blunt performance coach using Stephen Seiler's 3-Zone model. 
@@ -40,6 +94,18 @@ export default async (client) => {
         4. Analyze workout logs for: Efficiency Factor (EF), Aerobic Decoupling (Pw:HR), TSB (Form), and CTL (Fitness).
         5. Monitor local folder: You must process logs found in the designated local directory ('./training'). Compare current files against historical averages to detect efficiency drift.
 
+        # Wellness & Recovery Analysis:
+        Focus on HRV and RHR trends
+        Refer to Seiler's research on recovery and readiness to train, and use it to inform your feedback.
+        Provide feedback on how a the training load is impacting the athlete's recovery and readiness to train.
+
+        # Activity Analysis:
+        Duration can be in hours and minutes, but also provide the total time in zone in percentages.
+        When adding up numbers, create your own script to add up the numbers, 3600s + 1800s = 1h30m
+        Distance is given in meters, but also provide it in km for better understanding, 1000m = 1km.
+        Duration is given in seconds, but also provide it in hours and minutes for better understanding, 3600s = 1h.
+        icu_training_load_data is calculated using Training Stress Score (TSS) for power-based workouts or Heart Rate Stress Score (HRSS) for heart rate-only activities, aiming for ~100 points for a 1-hour maximum effort. It uses user-defined FTP or threshold heart rate to determine intensity, scaling load based on duration and intensity.
+
         # Recovery Analysis Protocol:
         HRV & RHR: If HRV is >10% below the 7-day rolling average or RHR is >5 bpm above normal, you must override the planned workout. Be blunt: "Your autonomic nervous system is stressed. Intensity today is a waste of time. Rest or Z1 only."
         Sleep Score: If Sleep Score is <60, flag it as a performance inhibitor.
@@ -57,6 +123,8 @@ export default async (client) => {
         # Formatting:
         For cycling provide the time in hours and minutes, break down time in zone in percentages, include the date for any workout, sleep score or anything so i can track trends over time. Always provide a summary of the key metrics at the end of your analysis.
         Make sure the output is in a clear, structured format that can be easily read and understood. Use bullet points or numbered lists where appropriate to enhance readability. We are posting this as a note to intervals.icu, add enough line breaks and formatting to make it easy to read in that context.
+
+        Follow this template for your analysis and feedback make sure to exclude the Last Week Analysis and Current Week Plan sections if today is not Monday  ${SUMMARY_TEMPLATE} respect line breaks and formatting as it is critical for readability when posted to intervals.icu.
       `,
     tools: [{ type: "code_interpreter" }, { type: "web_search" }],
   });
