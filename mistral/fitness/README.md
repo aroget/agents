@@ -1,15 +1,37 @@
-# AI Fitness Coach - Mistral Agent
+# AI Fitness Coach - 3-Agent Coaching System
 
-An automated fitness coaching system that analyzes your training data from intervals.icu using Mistral AI and provides personalized coaching feedback based on Stephen Seiler's polarized training methodology.
+An automated fitness coaching system that analyzes your training data from intervals.icu using a sophisticated 3-agent architecture powered by Mistral AI. The system provides personalized coaching feedback based on Stephen Seiler's polarized training methodology through specialized AI agents working in coordination.
+
+## 🏗️ Multi-Agent Architecture
+
+The coaching system uses three specialized AI agents that work together to provide comprehensive analysis:
+
+### 🔬 **Vitals Sentinel** (Wellness Agent)
+
+- **Role**: Recovery & Readiness Analysis
+- **Focus**: HRV, RHR, sleep quality, and physiological markers
+- **Output**: Recovery status, readiness score, and wellness constraints
+
+### 🎯 **Polarized Pro** (Training Methodology Agent)
+
+- **Role**: Training Strategy & Methodology
+- **Focus**: Stephen Seiler's 80/20 polarized training principles
+- **Output**: Training recommendations and methodology-specific guidance
+
+### 👨‍💼 **Director Sportif** (Head Coach Agent)
+
+- **Role**: Final Decision Making & Synthesis
+- **Focus**: Combines wellness constraints with training methodology
+- **Output**: Final coaching decision and actionable daily training plan
 
 ## Features
 
-- 🤖 **AI-Powered Analysis**: Uses Mistral's large language model to analyze training data
+- 🤖 **3-Agent AI System**: Specialized agents for wellness, strategy, and final decisions
 - 📊 **Intervals.icu Integration**: Fetches workout and wellness data automatically
 - 🏃‍♂️ **Polarized Training Focus**: Implements Stephen Seiler's 80/20 training philosophy
 - 📝 **Automated Feedback**: Posts coaching analysis directly to your intervals.icu calendar
-- ⚡ **Recovery Monitoring**: Analyzes HRV, RHR, sleep quality, and training load
-- 🎯 **Plateau Detection**: Identifies efficiency factor trends and training stagnation
+- ⚡ **Recovery-First Approach**: Wellness analysis overrides training plans when needed
+- 🎯 **Intelligent Synthesis**: Head coach combines multiple expert analyses
 
 ## Setup
 
@@ -74,13 +96,36 @@ DOWNLOAD_DIR=./training # location to dump the training data
 node index.js
 ```
 
-The system will:
+The 3-agent system will execute in sequence:
 
-1. ✅ Create a Mistral AI agent with coaching instructions
-2. 📥 Fetch your last 2 weeks of training data from intervals.icu
-3. 🧠 Analyze your training load, recovery metrics, and efficiency trends
-4. 📝 Generate personalized coaching feedback
-5. 📅 Post the analysis to today's calendar entry in intervals.icu
+1. 🔧 **Initialize Agents**: Create specialized Vitals Sentinel, Polarized Pro, and Director Sportif agents
+2. 📥 **Fetch Data**: Download last 2 weeks of training/wellness data from intervals.icu
+3. 🔬 **Wellness Analysis**: Vitals Sentinel analyzes recovery status and readiness
+4. 🎯 **Training Strategy**: Polarized Pro provides methodology-specific recommendations
+5. 👨‍💼 **Final Decision**: Director Sportif synthesizes both analyses into actionable guidance
+6. 📅 **Post Results**: Upload final coaching decision to intervals.icu calendar
+
+### Sample Console Output
+
+```
+🏃‍♂️ Starting 3-Agent Fitness Analysis Pipeline
+==================================================
+🔧 Initializing agents...
+📝 Setting up coaching staff instructions...
+🔬 STEP 1: Vitals Sentinel - Wellness Analysis
+📊 Vitals Sentinel Output:
+Status: READY (Green) - HRV stable, RHR normal
+------------------------------
+🎯 STEP 2: Polarized Pro - Training Analysis
+🏋️ Polarized Pro Output:
+Zone distribution: 82% Z1, 16% Z2, 2% Z3 - Good adherence
+------------------------------
+👨‍💼 STEP 3: Director Sportif - Final Decision
+🎖️ FINAL COACH DECISION:
+Today: 60min Zone 1 base ride. Recovery metrics green-light intensity.
+==================================================
+✅ 3-Agent AI Coach Pipeline completed successfully
+```
 
 ### Automation
 
@@ -171,16 +216,51 @@ crontab -e
 
 ```
 fitness/
-├── index.js                 # Main application entry point
+├── index.js                     # Main 3-agent pipeline orchestrator
+├── agents/
+│   ├── wellness/               # Vitals Sentinel Agent
+│   │   └── agent.js           # Recovery & wellness analysis
+│   ├── polarized/             # Polarized Pro Agent
+│   │   └── agent.js           # Training methodology specialist
+│   └── headcoach/             # Director Sportif Agent
+│       └── agent.js           # Final decision synthesis
 ├── intervals/
-│   ├── wellness.js         # Fetch training & wellness data
-│   └── add-note.js         # Post analysis to intervals.icu
-├── training/               # Local data storage (auto-created)
+│   ├── wellness.js            # Fetch training & wellness data
+│   └── add-note.js            # Post analysis to intervals.icu
+├── training/                  # Local data storage (auto-created)
+├── config.js                  # Athlete profile configuration
 ├── package.json
-├── .env                    # Environment variables
-├── config.js.              # General config, like athlete profile, etc
+├── .env                       # Environment variables
 └── README.md
 ```
+
+## 🔄 Agent Workflow
+
+The system follows a structured 3-step analysis pipeline:
+
+```
+1. 🔬 VITALS SENTINEL
+   ↓ (Wellness Analysis)
+   Input: Raw wellness & training data
+   Output: Recovery status, readiness constraints
+
+2. 🎯 POLARIZED PRO
+   ↓ (Training Strategy)
+   Input: Raw training data (independent analysis)
+   Output: Methodology-specific recommendations
+
+3. 👨‍💼 DIRECTOR SPORTIF
+   ↓ (Final Decision)
+   Input: Wellness constraints + Training recommendations
+   Output: Final coaching decision & daily plan
+```
+
+This architecture ensures:
+
+- **Separation of Concerns**: Each agent focuses on their expertise
+- **Independent Analysis**: Wellness and training agents avoid bias
+- **Executive Oversight**: Head coach synthesizes and makes final calls
+- **Constraint Handling**: Recovery status can override training plans
 
 ## Athlete Profile
 
@@ -200,15 +280,57 @@ const athleteProfile = {
 
 Modify these values to match your personal metrics.
 
-## Coaching Philosophy
+## Coaching Philosophy & Agent Specialization
 
-The AI coach implements **Stephen Seiler's Polarized Training Model**:
+### 🔬 **Vitals Sentinel Philosophy**
+
+- **Recovery-First Approach**: Physiological readiness overrides all training plans
+- **Trend Analysis**: 14-day rolling averages of HRV, RHR, sleep quality
+- **Warning Triggers**: HRV >10% below average, RHR >5 bpm above baseline
+- **Decision Matrix**: Green/Yellow/Red recovery status with specific constraints
+
+### 🎯 **Polarized Pro Methodology**
+
+Implements **Stephen Seiler's Polarized Training Model**:
 
 - **80/20 Rule**: 80% low intensity (Zone 1), 20% high intensity (Zone 3+)
 - **Black Hole Training**: Warns against excessive Zone 2 (moderate intensity)
 - **Efficiency Factor**: Monitors power-to-heart-rate ratio trends
-- **Recovery Priority**: Overrides training when HRV/RHR indicate poor recovery
 - **Plateau Detection**: Identifies when fitness gains have stagnated
+
+### 👨‍💼 **Director Sportif Decision Framework**
+
+- **Constraint Integration**: Wellness status overrides methodology recommendations
+- **Sport Prioritization**: Balances cycling/running based on recent activity gaps
+- **Intensity Modulation**: Downgrades intensity while maintaining sport specificity
+- **Executive Decisions**: Final authority on daily training prescriptions
+
+## 🚀 Deployment & Scaling
+
+The multi-agent architecture is designed for:
+
+### **GitHub Actions (Recommended)**
+
+- **Parallel Agent Execution**: Each agent can run independently
+- **Fault Tolerance**: Pipeline continues if individual agents fail
+- **Cost Efficiency**: Only activates when scheduled
+- **Multi-Athlete Support**: Easy to scale for coaching multiple athletes
+
+### **Containerization Ready**
+
+```dockerfile
+# Each agent can be containerized separately
+FROM node:18-alpine
+COPY agents/wellness/ /app/
+RUN pnpm install
+CMD ["node", "agent.js"]
+```
+
+### **API Deployment Options**
+
+- Convert to REST API for real-time coaching requests
+- WebSocket integration for live training guidance
+- Mobile app integration via API endpoints
 
 ## Sample Output
 
@@ -292,11 +414,35 @@ You are in a recovery phase following a high-load week. HRV is stable, and RHR i
 - `GET /athlete/{id}/wellness/{date}` - Get daily wellness metrics
 - `POST /athlete/{id}/events` - Create calendar events with coaching notes
 
-### Mistral AI Integration
+### Mistral AI Multi-Agent Integration
 
-- **Agent Creation**: Custom coaching agent with specialized instructions
-- **Conversation API**: Processes training data and generates analysis
-- **Model**: Uses `mistral-large-latest` for comprehensive analysis
+- **3-Agent Creation**: Specialized agents for wellness, training, and decision-making
+- **Sequential Conversations**: Structured pipeline with agent handoffs
+- **Context Preservation**: Outputs from earlier agents inform later decisions
+- **Model**: Uses `mistral-large-latest` for all agent reasoning
+- **Conversation API**: Each agent processes specific data and generates targeted analysis
+
+### Agent Communication Flow
+
+```javascript
+// 1. Vitals Sentinel analyzes wellness data
+const wellnessAnalysis = await client.beta.conversations.start({
+  agentId: vitalsSentinelAgent.id,
+  inputs: JSON.stringify(trainingData),
+});
+
+// 2. Polarized Pro analyzes training methodology
+const strategyAnalysis = await client.beta.conversations.start({
+  agentId: polarizedProAgent.id,
+  inputs: JSON.stringify(trainingData),
+});
+
+// 3. Director Sportif makes executive decision
+const finalDecision = await client.beta.conversations.start({
+  agentId: directorSportifAgent.id,
+  inputs: `Wellness: ${wellnessAnalysis} Strategy: ${strategyAnalysis}`,
+});
+```
 
 ## Troubleshooting
 
@@ -327,6 +473,48 @@ console.log("Debug data:", JSON.stringify(response, null, 2));
 
 ## Development
 
+### Adding New Agents
+
+To add a new specialized agent (e.g., Nutrition Agent):
+
+1. **Create agent directory**:
+
+   ```
+   agents/nutrition/
+   └── agent.js
+   ```
+
+2. **Implement agent creator**:
+
+   ```javascript
+   export default async (client) => {
+     return await client.beta.agents.create({
+       model: "mistral-large-latest",
+       name: "Nutrition Specialist",
+       instructions:
+         "Analyze dietary patterns and provide nutrition guidance...",
+       tools: [{ type: "code_interpreter" }],
+     });
+   };
+   ```
+
+3. **Update orchestrator** in `index.js`:
+   ```javascript
+   const nutritionAgent = await nutritionSpecialist(client);
+   const nutritionAnalysis = await client.beta.conversations.start({
+     agentId: nutritionAgent.id,
+     inputs: nutritionData,
+   });
+   ```
+
+### Customizing Agent Instructions
+
+Each agent's behavior is defined in their respective `agent.js` files:
+
+- **Vitals Sentinel** (`agents/wellness/agent.js`): Modify recovery thresholds and wellness parameters
+- **Polarized Pro** (`agents/polarized/agent.js`): Adjust training methodology and zone distributions
+- **Director Sportif** (`agents/headcoach/agent.js`): Change decision-making logic and output formatting
+
 ### Adding New Metrics
 
 To track additional wellness metrics, modify the `fetchFullData()` function in `intervals/wellness.js`:
@@ -339,14 +527,19 @@ const additionalMetrics = {
 };
 ```
 
-### Customizing Coaching Style
+### Agent Testing & Debugging
 
-Edit the agent instructions in `getOrCreateAgent()` to modify:
+Test individual agents in isolation:
 
-- Feedback tone (currently blunt/scientific)
-- Training philosophy
-- Analysis focus areas
-- Output formatting
+```javascript
+// Test wellness agent only
+const wellnessAgent = await vitalsSentinel(client);
+const result = await client.beta.conversations.start({
+  agentId: wellnessAgent.id,
+  inputs: testData,
+});
+console.log("Wellness Agent Output:", result.outputs[0].content);
+```
 
 ## License
 
@@ -361,4 +554,4 @@ MIT License - feel free to modify and adapt for your training needs.
 
 ---
 
-_Built for endurance athletes who want data-driven, no-nonsense coaching feedback._
+_Built for endurance athletes who want expert-level, multi-perspective coaching through specialized AI agents._
