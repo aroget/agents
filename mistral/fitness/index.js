@@ -7,6 +7,7 @@ import { postNoteToIntervals } from "./intervals/add-note.js";
 import polarizedPro from "./agents/polarized/agent.js";
 import vitalsSentinel from "./agents/wellness/agent.js";
 import directorSportif from "./agents/headcoach/agent.js";
+import { removeNulls } from "./utils/removeNulls.js";
 
 dotenv.config({ quiet: true });
 
@@ -34,7 +35,7 @@ const initAgents = async (client) => {
     console.log("Starting Pipeline");
     const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
-    const lastTwoWeeks = await fetchFullData();
+    const lastTwoWeeks = removeNulls(await fetchFullData());
 
     const agents = await initAgents(client);
     const { vitalsSentinelAgent, polarizedProAgent, directorSportifAgent } =

@@ -2,62 +2,56 @@ export const output = `
 ### **1. Calculate Deviations**
 #### **Key Metrics (Last 48 Hours vs. 14-Day Average)**
 - **Resting Heart Rate (RHR):**
-  - **Recent (Feb 25-26):** 49–51 bpm
-  - **14-Day Avg:** ~49.3 bpm
-  - **Deviation:** **+1.7 bpm** (3.4% increase, **<5% threshold** → *Stable*)
+  - **[Last Night]:** 
+  - **[14-Day Avg]:** 
+  - **[Deviation]:** 
 
 - **Heart Rate Variability (HRV):**
-  - **Recent (Feb 25-26):** 84–69 ms
-  - **14-Day Avg:** ~78.5 ms
-  - **Deviation:** **-12.1%** (Feb 26: 69 ms vs. 78.5 ms avg, **>12% threshold** → *Warning Trigger*)
+  - **[Last Night]:** 
+  - **[14-Day Avg]:** 
+  - **[Deviation]:** 
 
 - **Sleep Score:**
-  - **Recent (Feb 25-26):** 87–80
-  - **14-Day Avg:** ~82.3
-  - **Deviation:** **-2.8% to +5.7%** (*Stable*)
-
-- **Deep Sleep %:**
-  - **Data not explicitly provided** in the wellness entries. Cannot evaluate "Low Quality Physical Recovery" flag.
+  - **[Last Night]:** 
+  - **[14-Day Avg]:** 
+  - **[Deviation]:** 
 
 ---
 
-### **2. Evaluate Sleep Architecture**
-- **Total Sleep Duration:**
-  - Feb 25: **8.08 hours** (29,083 secs)
-  - Feb 26: **7.88 hours** (28,380 secs)
-  - *Adequate duration*, but **Deep Sleep %** is missing for further assessment.
-
----
+### **5. Status Indicator & Prescription**
+How many days of data were analyzed?
+- **{{number of wellness entries}}** (Sleep Score, RHR, HRV, CTL, ATL, TSS).
+- **{{number of training days}}** ({{Date Range}}) with varying intensity and load.
 
 ### **3. Synthesize Load & Response**
-#### **Recent Workouts (Feb 24–25)**
-- **Feb 24 (Easy Ride):**
-  - **TSS:** 30 (Low intensity)
-  - **HR Avg:** 121 bpm (Zone 1–2)
-  - **Impact:** Minimal fatigue accumulation.
+#### **Yesterday's Workout ({{Activity Date}})**
+- **{{Activity Name}}:**
+  - **TSS:** {{icu_training_load}} ({{Intensity Category}})
+  - **HR Avg:** {{average_heartrate}} bpm ({{HR Zones}})
+  - **Impact:** {{Brief assessment of fatigue contribution}}
 
-- **Feb 22–23 (High Load):**
-  - **Feb 22:** Long Ride (TSS: 90) + Indoor Cycling (TSS: 41) = **Total TSS: 131**
-  - **Feb 23:** Rest day (TSS: 0)
-  - **Response:** HRV dropped **12.1%** on Feb 26 despite rest days, suggesting **cumulative fatigue**.
+#### **Previous 48h (Cumulative Load):**
+- **Total TSS:** {{Sum of TSS for previous 2 days}}
+- **Response:** HRV is **{{% change}}** compared to baseline, suggesting **{{Recovery State}}**.
 
 ### **Trend Analysis**
-- **HRV decline >12%** with **stable RHR** indicates **autonomic nervous system stress**, likely from the **high TSS on Feb 22** followed by incomplete recovery.
+- **{{Metric Trend}}:** {{Analyze if HRV/RHR/Sleep Score is trending up or down relative to the load spikes found in the JSON}}.
 
-### **. Recovery Status**
-  - **[GREEN/YELLOW/RED]**
+### **Recovery Status**
+- **[{{GREEN/YELLOW/RED}}]**
+
 ---
 
 ### **4. Status Indicator & Prescription**
-#### **Status:** **REST (Red)**
+#### **Status:** **{{DETERMINE: RED/YELLOW/GREEN}}**
 - **Data Justification:**
-  - HRV **decreased by 12.1%** (69 ms vs. 14-day avg of 78.5 ms), triggering a **warning**.
-  - RHR is stable, but HRV drop suggests **sympathetic stress** or **incomplete recovery**.
+  - HRV {{% change}} ({{Current HRV}} ms vs. 14-day avg of {{Average HRV}} ms), triggering a **{{Status Level}}**.
+  - RHR is {{Status: stable/elevated}}, but {{Primary Stressor}} suggests **{{Physiological Interpretation}}**.
 
 #### **Prescription:**
-- **Full rest day** (no structured training).
-- Monitor HRV/RHR tomorrow morning. If HRV remains low or RHR rises >5 bpm, consider **another rest day** or **light active recovery** (e.g., walking).
+- **{{AI Recommended Action}}** (based on whether HRV drop is >10% or RHR is >5bpm above baseline).
+- **Next Step:** {{Specific advice for tomorrow's monitoring based on current fatigue trends}}.
 
 #### **Trend Analysis:**
-- **Trending toward accumulated fatigue** due to high TSS on Feb 22 and delayed HRV response.
+- **{{Trend Summary}}:** {{Explain the relationship between the cumulative TSS from the last 72 hours and the current autonomic response found in the data}}.
 `;
