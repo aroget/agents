@@ -1,7 +1,7 @@
 name: Daily Fitness Agent
 on:
   schedule:
-    - cron: "0 9 * * *" # 10 AM CET
+    - cron: "0 8 * * *" # 9 AM CET
   workflow_dispatch:
 
 jobs:

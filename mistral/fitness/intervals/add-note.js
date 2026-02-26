@@ -27,7 +27,7 @@ export async function postNoteToIntervals(noteContent) {
   const body = {
     category: "NOTE",
     start_date_local: today,
-    name: "🤖 AI Coach Analysis",
+    name: "🏅 Coach Notes",
     description: noteContent,
     show_on_calendar: true,
   };

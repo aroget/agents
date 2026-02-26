@@ -4,61 +4,67 @@ import * as dotenv from "dotenv";
 import { fetchFullData } from "./intervals/wellness.js";
 import { postNoteToIntervals } from "./intervals/add-note.js";
 
-import polarizedCoachAgent from "./agents/polarized.coach.agent.js";
+import twoWeeksData from "./training/training_2026-02-26.json" assert { type: "json" };
+
+import polarizedPro from "./agents/polarized/agent.js";
+import vitalsSentinel from "./agents/wellness/agent.js";
+import directorSportif from "./agents/headcoach/agent.js";
 
 dotenv.config({ quiet: true });
 
-const apiKey = process.env.MISTRAL_API_KEY;
-const client = new Mistral({ apiKey: apiKey });
-
-async function getOrCreateAgent() {
-  try {
-    const agent = await polarizedCoachAgent(client);
-
-    console.log("Agent created successfully:");
-
-    return agent.id;
-  } catch (error) {
-    console.error("Error creating agent:");
-    console.error(JSON.stringify(error, null, 2));
-    throw error;
-  }
-}
-
-async function runCoachCycle(agentId) {
-  const lastTwoWeeks = await fetchFullData();
-  if (!lastTwoWeeks) return;
-
-  console.log("Starting Analysis");
-
-  const response = await client.beta.conversations.start({
-    agentId: agentId,
-    inputs: `Analyze today's data: ${JSON.stringify(lastTwoWeeks)}. Compare it against my athlete profile and previous trends.`,
-  });
-
-  // Extract and display only the actual response content
-  const assistantMessage = response.outputs.find(
+const extractAgentOutput = (response) => {
+  const assistantOutput = response.outputs.find(
     (output) => output.role === "assistant",
   );
+  return assistantOutput ? assistantOutput.content : null;
+};
 
-  if (assistantMessage && assistantMessage.content) {
-    console.log("Analysis completed.");
-    return assistantMessage.content;
-  }
-  console.log("\n❌ No coach response found");
-  console.log("Raw response:", JSON.stringify(response.outputs, null, 2));
-}
+const initAgents = async (client) => {
+  const vitalsSentinelAgent = await vitalsSentinel(client);
+  const polarizedProAgent = await polarizedPro(client);
+  const directorSportifAgent = await directorSportif(client);
+
+  return {
+    vitalsSentinelAgent,
+    polarizedProAgent,
+    directorSportifAgent,
+  };
+};
 
 (async () => {
   try {
-    const agentId = await getOrCreateAgent();
-    const summary = await runCoachCycle(agentId);
-    await postNoteToIntervals(summary);
+    console.log("Starting Pipeline");
+    const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
 
-    console.log("✅ AI Coach cycle completed successfully");
+    const lastTwoWeeks = await fetchFullData();
+
+    const agents = await initAgents(client);
+    const { vitalsSentinelAgent, polarizedProAgent, directorSportifAgent } =
+      agents;
+
+    console.log("Starting Wellness Analysis with Vitals Sentinel Agent");
+    const wellness = await client.beta.conversations.start({
+      agentId: vitalsSentinelAgent.id,
+      inputs: JSON.stringify(lastTwoWeeks),
+    });
+
+    console.log("Starting Training Analysis with Polarized Pro Agent");
+    const strategy = await client.beta.conversations.start({
+      agentId: polarizedProAgent.id,
+      inputs: JSON.stringify(lastTwoWeeks),
+    });
+
+    console.log("Starting Final Prescription with Director Sportif Agent");
+    const finalPrescription = await client.beta.conversations.start({
+      agentId: directorSportifAgent.id,
+      inputs: `Wellness Report: ${extractAgentOutput(wellness)} Polarized Report: ${extractAgentOutput(strategy)}`,
+    });
+
+    await postNoteToIntervals(extractAgentOutput(finalPrescription));
+    console.log("Pipeline completed");
     process.exit(0);
   } catch (error) {
-    console.error("Application error:", error);
+    console.error("❌ Pipeline error:", error);
     process.exit(1);
   }
 })();
