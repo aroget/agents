@@ -4,8 +4,6 @@ import * as dotenv from "dotenv";
 import { fetchFullData } from "./intervals/wellness.js";
 import { postNoteToIntervals } from "./intervals/add-note.js";
 
-import twoWeeksData from "./training/training_2026-02-26.json" assert { type: "json" };
-
 import polarizedPro from "./agents/polarized/agent.js";
 import vitalsSentinel from "./agents/wellness/agent.js";
 import directorSportif from "./agents/headcoach/agent.js";
