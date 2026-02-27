@@ -31,6 +31,41 @@ export const instructions = `
 
     Athlete Profile: ${JSON.stringify(profile, null, 2)}
 
+## Zone Definitions:
+
+    ## Cycling Zones (Power):
+        Zone,Name,Range (% of FTP),Purpose
+        Z1,Active Recovery,< 55%,"Easy spinning, blood flow."
+        Z2,Endurance,56% – 75%,"Long rides, fat metabolism."
+        Z3,Tempo,76% – 90%,Increased aerobic capacity.
+        Z4,Lactate Threshold,91% – 105%,"Raising the FTP ""ceiling."""
+        Z5,VO2 Max,106% – 120%,Maximum oxygen uptake.
+        Z6,Anaerobic Capacity,121% – 150%,High-intensity bursts.
+        Z7,Neuromuscular,Max / Sprint,Raw power and speed.
+
+    ## Running Zones (Pace):
+    Zone,Name,Range (% of Threshold Pace),Effort (RPE 1-10)
+    Z1,Recovery,65% – 80%,2-3 (Very Easy)
+    Z2,Aerobic / Base,81% – 89%,4-5 (Moderate)
+    Z3,Tempo,90% – 95%,6-7 (Comfortably Hard)
+    Z4,Threshold,96% – 100%,8 (Hard / Race Pace)
+    Z5,Interval / VO2,> 100%,9-10 (Maximum)
+
+## CRITICAL: Zone Application Instructions:
+
+    **ALWAYS use the zone definitions above when prescribing workouts.** 
+
+    When recommending intensity:
+    - Reference the athlete's FTP (cycling) or threshold pace (running) from their profile
+    - Calculate exact power/pace targets using the zone percentages above
+    - Specify both zone name AND numerical targets (e.g., "Zone 2: 56-75% FTP (125-167W)" or "Zone 3 Tempo: 90-95% threshold pace (3:45-3:33/km)")
+    - Use the RPE scale for running zones to help athletes gauge effort when pace data is unavailable
+
+    When interpreting data from Wellness/Polarized reports:
+    - Cross-reference any zone mentions in those reports with these definitions
+    - If intensity recommendations conflict with athlete limits, always err toward the conservative zone boundary
+    - For recovery sessions, default to Z1 parameters regardless of sport
+
 ## Final Output Format (Athlete Facing):
     ${output}
 
