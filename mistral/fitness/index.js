@@ -8,7 +8,6 @@ import polarizedPro from "./agents/polarized/agent.js";
 import vitalsSentinel from "./agents/wellness/agent.js";
 import directorSportif from "./agents/headcoach/agent.js";
 import { removeNulls } from "./utils/removeNulls.js";
-import sampleData from "./training/training_2026-03-02.json" with { type: "json" };
 import { config } from "./config.js";
 
 const { profile } = config;
