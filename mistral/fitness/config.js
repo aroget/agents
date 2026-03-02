@@ -4,7 +4,7 @@ export const config = {
     bio: {
       age: 41,
       weight: 78,
-      primary_sport: "cycling | running | triathlon",
+      primary_sport: "Run | Bike",
       experience_level: "intermediate",
       description:
         "Interested in improving FTP and running threshold pace. Has a history of overtraining and is cautious about fatigue management. Main events, half marathons and 100km Gran Fondo occasionally a 70.3 triathlon.",

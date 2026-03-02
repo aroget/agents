@@ -8,6 +8,10 @@ import polarizedPro from "./agents/polarized/agent.js";
 import vitalsSentinel from "./agents/wellness/agent.js";
 import directorSportif from "./agents/headcoach/agent.js";
 import { removeNulls } from "./utils/removeNulls.js";
+import sampleData from "./training/training_2026-03-02.json" with { type: "json" };
+import { config } from "./config.js";
+
+const { profile } = config;
 
 dotenv.config({ quiet: true });
 
@@ -50,13 +54,21 @@ const initAgents = async (client) => {
     console.log("Starting Training Analysis with Polarized Pro Agent");
     const strategy = await client.beta.conversations.start({
       agentId: polarizedProAgent.id,
-      inputs: JSON.stringify(lastTwoWeeks),
+      inputs: JSON.stringify({
+        profile,
+        trainingLog: lastTwoWeeks,
+      }),
     });
 
     console.log("Starting Final Prescription with Director Sportif Agent");
     const finalPrescription = await client.beta.conversations.start({
       agentId: directorSportifAgent.id,
-      inputs: `Wellness Report: ${extractAgentOutput(wellness)} Polarized Report: ${extractAgentOutput(strategy)}`,
+      inputs: JSON.stringify({
+        profile,
+        trainingLog: lastTwoWeeks,
+        wellness: extractAgentOutput(wellness),
+        strategy: extractAgentOutput(strategy),
+      }),
     });
 
     await postNoteToIntervals(extractAgentOutput(finalPrescription));

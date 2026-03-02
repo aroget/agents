@@ -1,6 +1,7 @@
 import { config } from "../../config.js";
-
 import { instructions } from "./instructions.js";
+import { polarizedSchemaDefinition } from "./schema.js";
+
 const { model } = config;
 
 export default async (client) => {
@@ -12,6 +13,16 @@ export default async (client) => {
     instructions,
     completionArgs: {
       temperature: 0.2,
+      responseFormat: {
+        type: "json_schema",
+        jsonSchema: {
+          name: "PolarizedResponse",
+          description:
+            "Structured polarized training analysis and session recommendation",
+          schemaDefinition: polarizedSchemaDefinition,
+          strict: true,
+        },
+      },
     },
   });
 
