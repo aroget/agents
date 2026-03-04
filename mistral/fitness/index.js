@@ -8,6 +8,7 @@ import polarizedPro from "./agents/polarized/agent.js";
 import vitalsSentinel from "./agents/wellness/agent.js";
 import directorSportif from "./agents/headcoach/agent.js";
 import { removeNulls } from "./utils/removeNulls.js";
+import { sendEmail } from "./utils/sendEmail.js";
 import { config } from "./config.js";
 
 const { profile } = config;
@@ -70,7 +71,20 @@ const initAgents = async (client) => {
       }),
     });
 
+    console.log("Posting Note");
     await postNoteToIntervals(extractAgentOutput(finalPrescription));
+    console.log("Note Posted");
+
+    const shouldEmailResult =
+      process.env.NODE_ENV !== "development" &&
+      process.env.GMAIL_APP_PASSWORD &&
+      process.env.GMAIL_APP_USER;
+
+    if (shouldEmailResult) {
+      console.log("Sending Email");
+      await sendEmail(extractAgentOutput(finalPrescription));
+      console.log("Email Sent");
+    }
     console.log("Pipeline completed");
     process.exit(0);
   } catch (error) {

@@ -37,4 +37,6 @@ jobs:
           API_KEY: ${{ secrets.INTERVALS_API_KEY }}
           ATHLETE_ID: ${{ secrets.INTERVALS_ATHLETE_ID }}
           DOWNLOAD_DIR: "./training"
+          GMAIL_APP_USER: ${{ secrets.GMAIL_APP_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: node index.js
