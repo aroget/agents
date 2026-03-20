@@ -11,16 +11,12 @@ const DOWNLOAD_DIR = process.env.DOWNLOAD_DIR;
 
 if (!fs.existsSync(DOWNLOAD_DIR)) fs.mkdirSync(DOWNLOAD_DIR);
 
-export async function fetchFullData() {
+export async function fetchFullData(from, to) {
   const auth = Buffer.from(`API_KEY:${API_KEY}`).toString("base64");
-  const today = new Date().toISOString().split("T")[0];
-  const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
 
   // Define Endpoints
-  const activitiesUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/activities?newest=${today}&oldest=${twoWeeksAgo}`;
-  const wellnessUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/wellness.json?newest=${today}&oldest=${twoWeeksAgo}`;
+  const activitiesUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/activities?newest=${to}&oldest=${from}`;
+  const wellnessUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/wellness.json?newest=${to}&oldest=${from}`;
 
   try {
     console.log("Fetching data from Intervals.icu...");
@@ -44,12 +40,12 @@ export async function fetchFullData() {
     }
 
     const twoWeekSnapshot = {
-      period: `${twoWeeksAgo} to ${today}`,
+      period: `${from} to ${to}`,
       activities: activities,
       wellness: wellness,
     };
 
-    const filePath = path.join(DOWNLOAD_DIR, `training_${today}.json`);
+    const filePath = path.join(DOWNLOAD_DIR, `training_${to}.json`);
     fs.writeFileSync(filePath, JSON.stringify(twoWeekSnapshot, null, 2));
 
     console.log(
