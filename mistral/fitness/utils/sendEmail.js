@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import nodemailer from "nodemailer";
+import { marked } from "marked";
 
 export async function sendEmail(text) {
   const transporter = nodemailer.createTransport({
@@ -16,6 +17,7 @@ export async function sendEmail(text) {
     to: process.env.GMAIL_APP_USER,
     subject: `Coach Notes`,
     text,
+    html: marked(text),
   });
 
   console.log("Message sent: %s", info.messageId);
