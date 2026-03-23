@@ -43,6 +43,12 @@ export const dsIntervalsSchema = z.object({
       ),
   }),
 
+  nutrition: z
+    .string()
+    .describe(
+      "Pre/During/Post workout nutrition recommendations based on today's session",
+    ),
+
   keyAdjustments: z
     .array(z.string())
     .describe(

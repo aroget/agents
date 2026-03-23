@@ -57,14 +57,26 @@ export const polarizedResponseSchema = z.object({
   }),
   suggestions: z.array(
     z.object({
-      duration: z
-        .string()
-        .describe('Recommended session duration (e.g., "60-90 minutes")'),
-      structure: z
-        .string()
-        .describe(
-          "A strictly formatted workout template. Use EXACTLY this visual style: \n\n- [Duration] warm up [Zone]\n\n[Reps]x\n- [Duration] [Zone] [Metric]\n- [Duration] [Zone]\n\n- [Duration] [Zone] cool down",
-        ),
+      workoutStructure: z.string().describe(
+        `Strict Intervals.icu workout code. 
+          Rules: 
+          1. Warm-up/Cool-down: "- [Time] [Intensity Type]"
+          2. Intervals: "[N]x" followed by indented "- [Time] [Intensity Type] Ignore [N]x if there is only one main interval. In that case, just use the single line format for that interval."
+          3. Single Main Set: "- [Time] [Intensity Type]"
+          
+          Intensity Type Examples:
+          - Run: "80-85% LTHR" or "4:30-4:45 min/km"
+          - Bike: "90-95% FTP" or "Z3"
+          
+          Example Output:
+          -15m 70-75% LTHR
+
+          4x
+          -8m 80-85% LTHR
+          -2m 70-75% LTHR
+
+          -10m 70-75% LTHR`,
+      ),
       sportPriority: z
         .enum(config.profile.bio.primary_sport.split("|"))
         .describe("Recommended sport for this session"),
