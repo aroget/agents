@@ -7,17 +7,17 @@ import { extractAgentOutput } from "./extractAgentOutput.js";
 const isDev = process.env.NODE_ENV === "development";
 
 export const notify = async (finalPrescription) => {
-  const agentOutput = extractAgentOutput(finalPrescription);
+  const agentOutput = JSON.parse(extractAgentOutput(finalPrescription));
 
   // Development mode - just log and exit
   if (isDev) {
-    console.log(agentOutput);
+    console.log(agentOutput.fullIntervalsNote);
     return;
   }
 
   // Production mode - post note to intervals
   console.log("Posting Note");
-  await postNoteToIntervals(agentOutput);
+  await postNoteToIntervals(agentOutput.fullIntervalsNote);
   console.log("Note Posted");
 
   // Send email if credentials are available
@@ -26,7 +26,7 @@ export const notify = async (finalPrescription) => {
 
   if (canSendEmail) {
     console.log("Sending Email");
-    await sendEmail(agentOutput);
+    await sendEmail(agentOutput.fullIntervalsNote);
     console.log("Email Sent");
   }
 };

@@ -3,6 +3,8 @@ import { config } from "../../config.js";
 import { instructions } from "./instructions.js";
 const { model } = config;
 
+import { dsIntervalsSchemaDefinition } from "./schema.js";
+
 export default async (client) => {
   const agent = await client.beta.agents.create({
     model,
@@ -12,6 +14,16 @@ export default async (client) => {
     instructions,
     completionArgs: {
       temperature: 0.2,
+      responseFormat: {
+        type: "json_schema",
+        jsonSchema: {
+          name: "DSIntervalsResponse",
+          description:
+            "Structured DS intervals analysis and session recommendation",
+          schemaDefinition: dsIntervalsSchemaDefinition,
+          strict: true,
+        },
+      },
     },
   });
 
