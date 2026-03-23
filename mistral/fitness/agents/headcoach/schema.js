@@ -69,9 +69,11 @@ export const dsIntervalsSchema = z.object({
     .describe("The 'Protective but Purposeful' coaching sign-off"),
 
   // The final concatenated string for Intervals.icu
-  fullIntervalsNote: z
-    .string()
-    .describe("The entire output as a single string formatted for a note"),
+  fullIntervalsNote: z.string().describe(`
+      The entire output as a single string formatted for a note
+      Requirements:
+      1. All section headers must be bolded (e.g., **Coach’s Why**).
+      `),
 });
 
 // Convert Zod schema to JSON Schema for responseFormat using built-in method
