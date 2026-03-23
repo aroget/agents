@@ -39,4 +39,5 @@ jobs:
           DOWNLOAD_DIR: "./training"
           GMAIL_APP_USER: ${{ secrets.GMAIL_APP_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          DAYS_TO_ANALYZE: ${{ secrets.DAYS_TO_ANALYZE }}
         run: node index.js
