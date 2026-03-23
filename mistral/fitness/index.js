@@ -46,19 +46,24 @@ const initAgents = async (client) => {
     const wellness = await client.beta.conversations.start({
       today,
       agentId: vitalsSentinelAgent.id,
-      range: JSON.stringify({ today, fromDate }),
-      inputs: JSON.stringify(trainingLog),
+      inputs: JSON.stringify({
+        trainingLog,
+        today,
+        yesterday,
+        profile,
+        range: JSON.stringify({ today, fromDate }),
+      }),
     });
 
     console.log("Starting Training Analysis with Polarized Pro Agent");
     const strategy = await client.beta.conversations.start({
       agentId: polarizedProAgent.id,
-      today,
-      isWeekend,
-      range: JSON.stringify({ today, fromDate }),
       inputs: JSON.stringify({
         profile,
+        isWeekend,
+        yesterday,
         trainingLog: trainingLog,
+        range: JSON.stringify({ today, fromDate }),
       }),
     });
 
