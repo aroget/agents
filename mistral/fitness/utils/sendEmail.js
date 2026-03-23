@@ -12,7 +12,7 @@ export async function sendEmail(text) {
     },
   });
 
-  const info = await transporter.sendMail({
+  const info = transporter.sendMail({
     from: process.env.GMAIL_APP_USER,
     to: process.env.GMAIL_APP_USER,
     subject: `Coach Notes`,
