@@ -34,9 +34,9 @@ export async function fetchFullData(from, to) {
     let wellness = [];
     if (wellRes.ok) {
       wellness = await wellRes.json();
-      console.log(`✅ Fetched ${wellness.length} days of wellness data`);
+      console.log(`Fetched ${wellness.length} days of wellness data`);
     } else {
-      console.log(`❌ Failed to fetch wellness data (${wellRes.status})`);
+      console.log(`Failed to fetch wellness data (${wellRes.status})`);
     }
 
     const twoWeekSnapshot = {
@@ -49,7 +49,7 @@ export async function fetchFullData(from, to) {
     fs.writeFileSync(filePath, JSON.stringify(twoWeekSnapshot, null, 2));
 
     console.log(
-      "✅ Two weeks of training and wellness data fetched successfully.",
+      `${wellness.length} days of training and wellness data fetched successfully.`,
     );
     return twoWeekSnapshot;
   } catch (error) {
