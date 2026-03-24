@@ -14,18 +14,18 @@ export const dsIntervalsSchema = z.object({
     4. Single Main Set: "- [Time] [Intensity Type]"
     
     Intensity Type Examples:
-    - Run: A range of LTHR for low intensity, and threshold pace for high intensity intervals using the athlete's threshold pace from the profile (e.g., "4:50-5:10 m/km").
-    - Bike: A range of HR zones for low intensity, and percentage of the athlete's threshold power for high intensity intervals (e.g., "200-220W").
+    - Run: A range of LTHR for low intensity, and  pace for high intensity intervals using the athlete's threshold pace from the profile (e.g., "4:50-5:10 Pace or 60-70% LTHR").
+    - Bike: A range of HR zones for low intensity, and percentage of the athlete's threshold power for high intensity intervals (e.g., "200-220W or or 60-70% LTHR").
     - Do not mix intensity types within the same workout. If the intervals is using power, all intensity types should be in power. If using pace, all should be in pace or heart rate.
     
     Example Output:
-    -15m 70-75% 6:00-6:30 m/km
+    -15m 6:00-6:30 Pace
 
     4x
-    -8m 80-85% 4:50-5:10 m/km
-    -2m 70-75% 6:30-7:30 m/km
+    -8m 4:50-5:10 Pace
+    -2m 6:30-7:30 Pace
 
-    -10m 70-75% 6:00-6:30 m/km`,
+    -10m 6:00-6:30 Pace`,
   ),
 
   coachsWhy: z.object({
