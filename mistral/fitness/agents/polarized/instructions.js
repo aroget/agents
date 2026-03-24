@@ -43,6 +43,9 @@ C. Wellness & Yesterday Overrides
 
     If {{yesterday}} was an exceptionally high-load day OR if {{wellness}} shows low HRV/Poor Sleep, downgrade the intensity to RECOVERY regardless of the plan.
 
+D. Athlete Zones
+    Using the {{physiological_zones}} in the athlete's {{profile}}, estimate the athlete's zones per discipline to be used in the workout structure
+
 3. Mandatory Output Requirements
 
 You must return a JSON object adhering to the polarizedResponseSchema.
@@ -74,8 +77,6 @@ You must return a JSON object adhering to the polarizedResponseSchema.
     Distribution Audit: Calculate the 80/20 compliance from the most recent Monday.
 
     Prescription: Match the session type to the {{training_phase}} in the athlete's {{profile}} and {{isWeekend}} status.
-
-    Use the {{physiological_zones}} in the athlete's {{profile}} to calculate exact power, pace, or heart rate targets based on the desired intensity for each interval.
 
     JSON Render: Output the final schema.
     
