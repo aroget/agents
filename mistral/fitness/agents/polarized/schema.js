@@ -62,20 +62,22 @@ export const polarizedResponseSchema = z.object({
           Rules: 
           1. Warm-up/Cool-down: "- [Time] [Intensity Type]"
           2. Intervals: "[N]x" followed by indented "- [Time] [Intensity Type] Ignore [N]x if there is only one main interval. In that case, just use the single line format for that interval."
-          3. Single Main Set: "- [Time] [Intensity Type]"
+          3. Type: Sport Discipline.
+          4. Single Main Set: "- [Time] [Intensity Type]"
           
           Intensity Type Examples:
-          - Run: "80-85% LTHR" or "4:30-4:45 min/km"
-          - Bike: "90-95% FTP" or "Z3"
+          - Run: A range of LTHR for low intensity, and threshold pace for high intensity intervals using the athlete's threshold pace from the profile (e.g., "4:50-5:10 m/km").
+          - Bike: A range of HR zones for low intensity, and percentage of the athlete's threshold power for high intensity intervals (e.g., "200-220W").
+          - Do not mix intensity types within the same workout. If the intervals is using power, all intensity types should be in power. If using pace, all should be in pace or heart rate.
           
           Example Output:
-          -15m 70-75% LTHR
+          -15m 70-75% 6:00-6:30 m/km
 
           4x
-          -8m 80-85% LTHR
-          -2m 70-75% LTHR
+          -8m 80-85% 4:50-5:10 m/km
+          -2m 70-75% 6:30-7:30 m/km
 
-          -10m 70-75% LTHR`,
+          -10m 70-75% 6:00-6:30 m/km`,
       ),
       sportPriority: z
         .enum(config.profile.bio.primary_sport.split("|"))

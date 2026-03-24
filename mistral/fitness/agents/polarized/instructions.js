@@ -73,7 +73,9 @@ You must return a JSON object adhering to the polarizedResponseSchema.
 
     Distribution Audit: Calculate the 80/20 compliance from the most recent Monday.
 
-    Prescription: Match the session type to the seasonPhase and isWeekend status.
+    Prescription: Match the session type to the {{training_phase}} in the athlete's {{profile}} and {{isWeekend}} status.
+
+    Use the {{physiological_zones}} in the athlete's {{profile}} to calculate exact power, pace, or heart rate targets based on the desired intensity for each interval.
 
     JSON Render: Output the final schema.
     

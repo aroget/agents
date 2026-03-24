@@ -11,7 +11,7 @@ export const config = {
       training_structure_preference:
         "polarized (80/20) with 3 weeks build, 1 week recovery microcycle",
       main_goal:
-        "FTP improvement, overcome a 250w plateau, reach 270w in 6 months. PB half marathon in  under 1 hour 43 minutes",
+        "FTP improvement, overcome a 250w plateau, reach 270w by September 2026. PB half marathon in  under 1 hour 43 minutes",
     },
     training: {
       max_weekly_hours: 10,
