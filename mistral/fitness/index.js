@@ -10,10 +10,11 @@ import { sanitizeData } from "./utils/sanitizeData.js";
 import { extractAgentOutput } from "./utils/extractAgentOutput.js";
 import { notify } from "./utils/notifications.js";
 import { isWeekend } from "./utils/isWeekend.js";
-
+import { removeNulls } from "./utils/removeNulls.js";
 import { getHistoryRange } from "./utils/getDateRange.js";
 
 import { config } from "./config.js";
+import { is } from "zod/v4/locales";
 
 const { profile } = config;
 
@@ -36,7 +37,10 @@ const initAgents = async (client) => {
     console.log("Starting Pipeline");
     const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
     const { fromDate, today, yesterday } = getHistoryRange();
-    const trainingLog = sanitizeData(await fetchFullData(fromDate, today));
+
+    const trainingLog = removeNulls(
+      sanitizeData(await fetchFullData(fromDate, today)),
+    );
 
     const agents = await initAgents(client);
     const { vitalsSentinelAgent, polarizedProAgent, directorSportifAgent } =
@@ -60,9 +64,9 @@ const initAgents = async (client) => {
       agentId: polarizedProAgent.id,
       inputs: JSON.stringify({
         profile,
-        isWeekend,
+        isWeekend: isWeekend(today),
         yesterday,
-        trainingLog: trainingLog,
+        trainingLog,
         range: JSON.stringify({ today, fromDate }),
       }),
     });
@@ -73,9 +77,9 @@ const initAgents = async (client) => {
       agentId: directorSportifAgent.id,
       inputs: JSON.stringify({
         profile,
-        isWeekend,
+        isWeekend: isWeekend(today),
         yesterday,
-        trainingLog: trainingLog,
+        trainingLog,
         range: JSON.stringify({ today, fromDate }),
         wellness: extractAgentOutput(wellness),
         strategy: extractAgentOutput(strategy),
