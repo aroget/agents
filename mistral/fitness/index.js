@@ -14,7 +14,6 @@ import { removeNulls } from "./utils/removeNulls.js";
 import { getHistoryRange } from "./utils/getDateRange.js";
 
 import { config } from "./config.js";
-import { is } from "zod/v4/locales";
 
 const { profile } = config;
 
@@ -87,7 +86,11 @@ const initAgents = async (client) => {
     });
 
     console.log("Analysis complete, preparing notifications...");
-    await notify(finalPrescription);
+    await notify({
+      wellness: extractAgentOutput(wellness),
+      strategy: extractAgentOutput(strategy),
+      finalPrescription: extractAgentOutput(finalPrescription),
+    });
     console.log("Pipeline completed");
 
     process.exit(0);
