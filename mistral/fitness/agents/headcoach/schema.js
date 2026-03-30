@@ -44,6 +44,50 @@ export const dsIntervalsSchema = z.object({
       ),
   }),
 
+  progressionContext: z.object({
+    energySystem: z
+      .enum([
+        "Alactic",
+        "Anaerobic",
+        "Aerobic_Threshold",
+        "VO2_Max",
+        "Recovery",
+      ])
+      .describe("The physiological system this workout targets."),
+
+    historicalComparison: z
+      .string()
+      .describe(
+        "A 2-3 sentence summary of how this specific target has trended over the last 30 days for this particular sport. Mention specific improvements like 'Your HR was 4bpm lower at this pace 2 weeks ago'.",
+      ),
+
+    targetTrend: z
+      .enum(["improving", "stable", "regressing", "new_stimulus"])
+      .describe(
+        "The trajectory of the user's performance in this specific energy system in this sport",
+      ),
+
+    suggestedBenchmark: z
+      .string()
+      .describe(
+        "A specific number or feeling from a previous similar session the athlete should try to beat today.",
+      ),
+  }),
+
+  // POST-WORKOUT SELF-ANALYSIS GUIDE
+  postWorkoutSelfAnalysisChecklist: z.object({
+    successCriteria: z
+      .string()
+      .describe(
+        "What 'good' looks like for this session (e.g., 'If your pace didn't drop more than 5% in the final set').",
+      ),
+    redFlags: z
+      .array(z.string())
+      .describe(
+        "Data patterns that suggest the user overreached or needs more recovery.",
+      ),
+  }),
+
   nutrition: z
     .string()
     .describe(

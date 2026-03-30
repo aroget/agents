@@ -43,32 +43,19 @@ export const wellnessResponseSchema = z.object({
       }),
     }),
   }),
+
   loadAnalysis: z.object({
-    yesterdayWorkout: z.preprocess(
-      (val) => (val === null ? undefined : val), // If null, treat as missing
-      z
-        .union([
-          z.object({
-            date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-            activityName: z.string(),
-            tss: z.number().nullable(),
-            intensityCategory: z
-              .enum(["low", "moderate", "high", "very_high"])
-              .nullable(),
-            averageHeartRate: z.number().nullable(),
-            impact: z.string(),
-          }),
-          z.literal("Rest Day"),
-        ])
-        .default("Rest Day"),
-    ),
+    yesterdayWorkout: z.object({
+      intensity: z.enum(["REST", "LOW", "MODERATE", "HIGH", "VERY_HIGH"]),
+      duration: z.number(), // minutes
+      impact: z.enum(["MINIMAL", "MODERATE", "HIGH", "VERY_HIGH"]),
+    }),
+    recoveryDebt: z.number(), // calculated from training load
+    expectedRecoveryDays: z.number(), // based on patterns
+    trainingLoadAlignment: z.enum(["ALIGNED", "MISALIGNED"]), // metrics vs load
     previous48h: z.object({
-      totalTSS: z.number(),
-      cumulativeLoad: z.object({
-        ctl: z.number().nullable(),
-        atl: z.number().nullable(),
-      }),
-      response: z.string(),
+      cumulativeStress: z.number(),
+      response: z.enum(["NORMAL", "DELAYED", "BLUNTED", "EXCESSIVE"]),
     }),
   }),
   statusIndicator: z.object({
@@ -80,6 +67,54 @@ export const wellnessResponseSchema = z.object({
     }),
     prescription: z.string(),
     nextStep: z.string(),
+  }),
+  adaptiveBaselines: z.object({
+    hrv: z.object({
+      current7day: z.number(),
+      current14day: z.number(),
+      currentValue: z.number(),
+      deviationFromBaseline: z.number(), // in standard deviations
+    }),
+    rhr: z.object({
+      current7day: z.number(),
+      current14day: z.number(),
+      currentValue: z.number(),
+      deviationFromBaseline: z.number(),
+    }),
+    sleepScore: z.object({
+      current7day: z.number(),
+      current14day: z.number(),
+      currentValue: z.number(),
+      deviationFromBaseline: z.number(),
+    }),
+  }),
+  trendAnalysis: z.object({
+    hrv: z.object({
+      threeDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+      sevenDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+      recoveryMomentum: z.enum(["STRONG", "MODERATE", "WEAK", "NONE"]),
+      velocityScore: z.number(), // rate of change
+    }),
+    rhr: z.object({
+      threeDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+      sevenDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+      recoveryMomentum: z.enum(["STRONG", "MODERATE", "WEAK", "NONE"]),
+      velocityScore: z.number(),
+    }),
+    sleepScore: z.object({
+      threeDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+      sevenDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+      recoveryMomentum: z.enum(["STRONG", "MODERATE", "WEAK", "NONE"]),
+      velocityScore: z.number(),
+    }),
+    overall: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
+  }),
+  recentPatterns: z.object({
+    significantDropDetected: z.boolean(),
+    daysWhereDropDetected: z.number().nullable(), // days ago, null if no drop
+    daysSinceLastDrop: z.number().nullable(),
+    currentlyRecovering: z.boolean(),
+    baselineShiftSuspected: z.boolean(),
   }),
   trendAnalysis: z.object({
     overview: z.string(),

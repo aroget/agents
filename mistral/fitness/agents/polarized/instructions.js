@@ -46,7 +46,15 @@ C. Wellness & Yesterday Overrides
 D. Athlete Zones
     Using the {{physiological_zones}} in the athlete's {{profile}}, estimate the athlete's zones per discipline to be used in the workout structure
 
-3. Mandatory Output Requirements
+E. Cycling
+    Follow the specific FTP-based intensity guidelines for high intensity intervals based on the target % of FTP and interval length. 
+    
+    Interval Length,Target % of FTP,Physiological Focus
+    30/30s or 40/20s,130% – 140%,High Anaerobic Contribution / Neuromuscular Power
+    2 Minutes,115% – 125%,Traditional VO2​ Max 'Peak' Power
+    3 Minutes,110% – 115%,High Aerobic Strain / Lactate Tolerance
+    4 Minutes,108% – 112%,Maximum Oxygen Uptake (VO2​ max) Plateau
+    5+ Minutes,105% – 108%,Aerobic Capacity / 'Hard' Threshold Extension
 
 You must return a JSON object adhering to the polarizedResponseSchema.
 
@@ -68,16 +76,43 @@ You must return a JSON object adhering to the polarizedResponseSchema.
 
 4. Execution Pipeline
 
-    Temporal Anchor: Identify the day of the week for {{today}}.
+    **Temporal Anchor**: Identify the day of the week for {{today}} and calculate days elapsed since the most recent Monday.
 
-    Gap Analysis: Fill missing dates in {{trainingLog}} within the {{range}} with "Rest Day" placeholders.
+    **Cycle Position**: Determine current position in the 3:1 periodization cycle by analyzing the past 3 weeks of {{trainingLog}} data to identify if we are in week 1, 2, 3 (loading) or 4 (recovery).
 
-    Cycle Detection: Determine if we are in an "On" week or a "Recovery" week (3:1).
+    **Weekly Distribution Analysis**: 
+    - Calculate cumulative training time by intensity zones from Monday to {{today}}
+    - Determine current 80/20 compliance percentage
+    - Assess remaining intensity budget for the week
+    - Flag any distribution violations that require immediate correction
 
-    Distribution Audit: Calculate the 80/20 compliance from the most recent Monday.
+    **Fatigue Assessment**: 
+    - Analyze {{training_load}} trends over the past 21 days
+    - Calculate Training Stress Balance (TSB) if available
+    - Cross-reference with {{wellness}} metrics (HRV, sleep, RPE)
+    - Determine overall fatigueState: FRESH, MODERATE, HIGH, CRITICAL
 
-    Prescription: Match the session type to the {{training_phase}} in the athlete's {{profile}} and {{isWeekend}} status.
+    **Yesterday's Session Impact**: 
+    - Locate {{yesterday}} in {{trainingLog}} and extract intensity distribution, if not found assume REST and check for any wellness indicators of fatigue
+    - Calculate session impact on weekly 80/20 balance
+    - Assess recovery needs based on session type and duration
+    - Flag if intensity step-back is required
 
-    JSON Render: Output the final schema.
+    **Session Type Selection**:
+    - Match available session types to current {{training_phase}} (BASE/BUILD/PEAK)
+    - Apply {{isWeekend}} volume prioritization rules
+    - Ensure compliance with {{max_weekly_hours}}
+    - Select primary session intensity based on 80/20 budget and cycle position
+
+    **Workout Prescription**:
+    - Generate dual-sport recommendations (primary: Bike, secondary: Run)
+    - Calculate specific zones using {{physiological_zones}} from {{profile}}
+    - Structure workouts using the exact formatting template
+    - Validate total session duration against weekly limits
+
+    **Quality Assurance & JSON Output**: 
+    - Verify all calculations align with polarized training principles
+    - Confirm 80/20 compliance will be maintained or corrected
+    - Generate final polarizedResponseSchema with all required fields populated
     
 `;
