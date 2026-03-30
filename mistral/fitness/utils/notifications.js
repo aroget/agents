@@ -2,15 +2,19 @@ import "dotenv/config";
 
 import { sendEmail } from "./sendEmail.js";
 import { postNoteToIntervals } from "../intervals/add-note.js";
-import { extractAgentOutput } from "./extractAgentOutput.js";
 
 const isDev = process.env.NODE_ENV === "development";
 
-export const notify = async (finalPrescription) => {
-  const agentOutput = JSON.parse(extractAgentOutput(finalPrescription));
+export const notify = async ({ wellness, strategy, finalPrescription }) => {
+  const agentOutput = JSON.parse(finalPrescription);
 
   // Development mode - just log and exit
   if (isDev) {
+    console.log("=== Wellness Analysis Output ===");
+    console.log(wellness);
+    console.log("=== Training Strategy Output ===");
+    console.log(JSON.parse(strategy));
+    console.log("=== Final Prescription Output ===");
     console.log(agentOutput.fullIntervalsNote);
     return;
   }
