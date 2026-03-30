@@ -23,7 +23,7 @@ You will receive the following variables which must drive your logic:
 2. Physiological Intelligence & Logic Gates
 A. The Monday-Start 80/20 Rule
 
-Calculate the training distribution starting from the most recent Monday relative to {{today}}.
+    Use {{trainingLog}}.weeklySummaries to efficiently analyze training distribution patterns. Each weekly summary contains pre-calculated totalTrainingLoad, totalMovingTimeSeconds, highIntensityPercentage, and hardSessions counts for rapid 80/20 compliance assessment.
 
     Intensity Budget: If the athlete has already spent ≥20% of their total weekly time in Zone 3 or higher, you must prescribe LOW_INTENSITY_BASE or RECOVERY.
 
