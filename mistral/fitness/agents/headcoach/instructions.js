@@ -58,7 +58,7 @@ You must process your inputs with the following priority:
     - Compare {{strategy}} recommendations against wellness constraints
     - Apply Director Sportif judgment to modify/override polarized suggestions
     - Prioritize athlete readiness over rigid training plans
-    - Select single primary workout (Run OR Bike) based on readiness hierarchy
+    - Select single primary workout based on readiness hierarchy
 
     **Historical Performance Context**: 
     - Filter {{trainingLog}} for sessions matching selected energySystem and sport (found in {{trainingLog}}.weeklySummaries.activities.type, Ride and Virtual_Ride map to Bike, Run maps to Run)

@@ -6,8 +6,8 @@ export const getHighIntensityTime = (activity) => {
     ? activity.hr_zone_times_seconds
     : Object.values(activity.hr_zone_times_seconds);
 
-  // Zones 4, 5 (indices 3, 4) are considered high intensity
-  return (zones[3] || 0) + (zones[4] || 0);
+  // Zones 3, 4, 5 (indices 2, 3, 4) are considered high intensity
+  return (zones[2] || 0) + (zones[3] || 0) + (zones[4] || 0);
 };
 
 export const isHardSession = (activity) => {
