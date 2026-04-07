@@ -5,7 +5,10 @@ import {
   calculateStdDev,
   calculateTrend,
 } from "./data-processing/statisticsUtils.js";
-import { detectSignificantDrops } from "./data-processing/patternUtils.js";
+import {
+  detectSignificantDrops,
+  detectSignificantIncreases,
+} from "./data-processing/patternUtils.js";
 import {
   groupActivitiesByWeek,
   createWeeklySummaries,
@@ -25,18 +28,18 @@ export const sanitizeData = (data) => {
     sleepScore: w.sleepScore,
   }));
 
+  const hrv7Avg = calculateRollingAverage(sanitizedWellness, "hrv", 7);
+  const hrv7Recent = sanitizedWellness
+    .slice(-7)
+    .filter((w) => w.hrv != null)
+    .map((w) => w.hrv);
+  const hrv7Sd = hrv7Avg ? calculateStdDev(hrv7Recent, hrv7Avg) : null;
+
   // Calculate wellness analytics
   const wellnessAnalytics = {
     standardDeviations: {
       hrv: {
-        day7: (() => {
-          const recent = sanitizedWellness
-            .slice(-7)
-            .filter((w) => w.hrv != null)
-            .map((w) => w.hrv);
-          const avg = calculateRollingAverage(sanitizedWellness, "hrv", 7);
-          return avg ? calculateStdDev(recent, avg) : null;
-        })(),
+        day7: hrv7Sd,
         day14: (() => {
           const recent = sanitizedWellness
             .slice(-14)
@@ -102,8 +105,9 @@ export const sanitizeData = (data) => {
 
     rollingAverages: {
       hrv: {
-        day7: calculateRollingAverage(sanitizedWellness, "hrv", 7),
+        day7: hrv7Avg,
         day14: calculateRollingAverage(sanitizedWellness, "hrv", 14),
+        cv7: hrv7Avg && hrv7Sd ? (hrv7Sd / hrv7Avg).toFixed(3) : null,
       },
       restingHR: {
         day7: calculateRollingAverage(sanitizedWellness, "restingHR", 7),
@@ -129,13 +133,13 @@ export const sanitizeData = (data) => {
       sleepScore: {
         threeDaySlope: calculateTrend(sanitizedWellness, "sleepScore", 3),
         sevenDaySlope: calculateTrend(sanitizedWellness, "sleepScore", 7),
-        fourteenDaySlope: calculateTrend(sanitizedWellness, "sleepScore", 7),
+        fourteenDaySlope: calculateTrend(sanitizedWellness, "sleepScore", 14),
       },
     },
 
     patterns: {
       hrvDrops: detectSignificantDrops(sanitizedWellness, "hrv"),
-      rhrSpikes: detectSignificantDrops(sanitizedWellness, "restingHR"),
+      rhrSpikes: detectSignificantIncreases(sanitizedWellness, "restingHR"),
       sleepDeclines: detectSignificantDrops(sanitizedWellness, "sleepScore"),
     },
 
@@ -159,13 +163,13 @@ export const sanitizeData = (data) => {
 
     wellnessAnalytics.currentDeviations = {
       hrv: {
-        fromWeekly: wellnessAnalytics.rollingAverages.hrv.day7
-          ? (
-              ((latest.hrv - wellnessAnalytics.rollingAverages.hrv.day7) /
-                wellnessAnalytics.rollingAverages.hrv.day7) *
-              100
-            ).toFixed(1)
+        percentFromWeekly: hrv7Avg
+          ? (((latest.hrv - hrv7Avg) / hrv7Avg) * 100).toFixed(1)
           : null,
+        zScore:
+          hrv7Avg && hrv7Sd
+            ? ((latest.hrv - hrv7Avg) / hrv7Sd).toFixed(2)
+            : null,
         fromBiweekly: wellnessAnalytics.rollingAverages.hrv.day14
           ? (
               ((latest.hrv - wellnessAnalytics.rollingAverages.hrv.day14) /
@@ -175,7 +179,7 @@ export const sanitizeData = (data) => {
           : null,
       },
       restingHR: {
-        fromWeekly: wellnessAnalytics.rollingAverages.restingHR.day7
+        percentFromWeekly: wellnessAnalytics.rollingAverages.restingHR.day7
           ? (
               ((latest.restingHR -
                 wellnessAnalytics.rollingAverages.restingHR.day7) /
@@ -183,6 +187,15 @@ export const sanitizeData = (data) => {
               100
             ).toFixed(1)
           : null,
+        zScore:
+          wellnessAnalytics.rollingAverages.restingHR.day7 &&
+          wellnessAnalytics.standardDeviations.restingHR.day7
+            ? (
+                (latest.restingHR -
+                  wellnessAnalytics.rollingAverages.restingHR.day7) /
+                wellnessAnalytics.standardDeviations.restingHR.day7
+              ).toFixed(2)
+            : null,
         fromBiweekly: wellnessAnalytics.rollingAverages.restingHR.day14
           ? (
               ((latest.restingHR -

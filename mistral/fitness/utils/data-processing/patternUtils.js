@@ -19,3 +19,39 @@ export const detectSignificantDrops = (data, field, threshold = 0.15) => {
   }
   return drops;
 };
+
+export const detectSignificantIncreases = (
+  data,
+  key,
+  threshold = 0.1,
+  window = 7,
+) => {
+  const spikes = [];
+
+  for (let i = window; i < data.length; i++) {
+    const currentVal = data[i][key];
+
+    // Get the previous 'window' days for the baseline
+    const baselinePeriod = data
+      .slice(i - window, i)
+      .filter((d) => d[key] != null);
+
+    if (baselinePeriod.length < window / 2 || currentVal == null) continue;
+
+    const avg =
+      baselinePeriod.reduce((sum, d) => sum + d[key], 0) /
+      baselinePeriod.length;
+    const percentIncrease = (currentVal - avg) / avg;
+
+    if (percentIncrease >= threshold) {
+      spikes.push({
+        date: data[i].date,
+        value: currentVal,
+        baseline: avg.toFixed(1),
+        increase: (percentIncrease * 100).toFixed(1) + "%",
+      });
+    }
+  }
+
+  return spikes;
+};
