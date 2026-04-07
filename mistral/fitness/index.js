@@ -1,101 +1,183 @@
 import { Mistral } from "@mistralai/mistralai";
 import * as dotenv from "dotenv";
 
-import { fetchFullData } from "./intervals/wellness.js";
+import { config } from "./config.js";
 
 import polarizedPro from "./agents/polarized/agent.js";
+import pyramidalPro from "./agents/pyramidal/agent.js";
 import vitalsSentinel from "./agents/wellness/agent.js";
 import directorSportif from "./agents/headcoach/agent.js";
-import { sanitizeData } from "./utils/sanitizeData.js";
+
 import { extractAgentOutput } from "./utils/extractAgentOutput.js";
 import { notify } from "./utils/notifications.js";
 import { isWeekend } from "./utils/isWeekend.js";
-import { removeNulls } from "./utils/removeNulls.js";
 import { getHistoryRange } from "./utils/getDateRange.js";
-
-import { config } from "./config.js";
-
-const { profile } = config;
+import { fetchFullData } from "./intervals/wellness.js";
+import { sanitizeData } from "./utils/sanitizeData.js";
+import { removeNulls } from "./utils/removeNulls.js";
 
 dotenv.config({ quiet: true });
 
-const initAgents = async (client) => {
-  const vitalsSentinelAgent = await vitalsSentinel(client);
-  const polarizedProAgent = await polarizedPro(client);
-  const directorSportifAgent = await directorSportif(client);
+// Constants
+const TRAINING_PHILOSOPHIES = {
+  POLARIZED: "polarized",
+  PYRAMIDAL: "pyramidal",
+};
+
+const AGENT_CONFIGS = {
+  [TRAINING_PHILOSOPHIES.POLARIZED]: {
+    agent: polarizedPro,
+    name: "Polarized Pro",
+  },
+  [TRAINING_PHILOSOPHIES.PYRAMIDAL]: {
+    agent: pyramidalPro,
+    name: "Pyramidal Pro",
+  },
+};
+
+// Helper functions
+const createAgentInputs = (inputs) => JSON.stringify(inputs);
+
+const getStrategyAgentConfig = () => {
+  const philosophy =
+    process.env.TRAINING_PHILOSOPHY?.toLowerCase() ||
+    TRAINING_PHILOSOPHIES.POLARIZED;
+  return (
+    AGENT_CONFIGS[philosophy] || AGENT_CONFIGS[TRAINING_PHILOSOPHIES.POLARIZED]
+  );
+};
+
+/**
+ * Initialize all agents required for the training pipeline
+ */
+const initializeAgents = async (client) => {
+  const [vitalsSentinelAgent, directorSportifAgent] = await Promise.all([
+    vitalsSentinel(client),
+    directorSportif(client),
+  ]);
+
+  const strategyConfig = getStrategyAgentConfig();
+  const strategyAgent = await strategyConfig.agent(client);
 
   return {
     vitalsSentinelAgent,
-    polarizedProAgent,
+    strategyAgent,
+    strategyAgentName: strategyConfig.name,
     directorSportifAgent,
   };
 };
 
-(async () => {
-  try {
-    console.log("Starting Pipeline");
-    const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-    const { fromDate, today, yesterday } = getHistoryRange();
+/**
+ * Prepare training data from intervals
+ */
+const prepareTrainingData = async (fromDate, today) => {
+  console.log(`📊 Fetching training data from ${fromDate} to ${today}`);
+  const rawData = await fetchFullData(fromDate, today);
+  return removeNulls(sanitizeData(rawData));
+};
 
-    const trainingLog = removeNulls(
-      sanitizeData(await fetchFullData(fromDate, today)),
-    );
+/**
+ * Run wellness analysis
+ */
+const runWellnessAnalysis = async (client, agentId, inputs) => {
+  console.log("🏥 Starting Wellness Analysis with Vitals Sentinel Agent");
+  return await client.beta.conversations.start({
+    today: inputs.today,
+    agentId,
+    inputs: createAgentInputs(inputs),
+  });
+};
 
-    const agents = await initAgents(client);
-    const { vitalsSentinelAgent, polarizedProAgent, directorSportifAgent } =
-      agents;
+/**
+ * Run training strategy analysis
+ */
+const runStrategyAnalysis = async (client, agentId, agentName, inputs) => {
+  console.log(`🎯 Starting Training Analysis with ${agentName} Agent`);
+  return await client.beta.conversations.start({
+    agentId,
+    inputs: createAgentInputs(inputs),
+  });
+};
 
-    console.log("Starting Wellness Analysis with Vitals Sentinel Agent");
-    const wellness = await client.beta.conversations.start({
-      today,
-      agentId: vitalsSentinelAgent.id,
-      inputs: JSON.stringify({
-        trainingLog,
-        today,
-        yesterday,
-        profile,
-        range: JSON.stringify({ today, fromDate }),
-      }),
-    });
+/**
+ * Run final prescription analysis
+ */
+const runFinalPrescription = async (client, agentId, inputs) => {
+  console.log("🎖️ Starting Final Prescription with Director Sportif Agent");
+  return await client.beta.conversations.start({
+    today: inputs.today,
+    agentId,
+    inputs: createAgentInputs(inputs),
+  });
+};
 
-    console.log("Starting Training Analysis with Polarized Pro Agent");
-    const strategy = await client.beta.conversations.start({
-      agentId: polarizedProAgent.id,
-      inputs: JSON.stringify({
-        profile,
-        isWeekend: isWeekend(today),
-        yesterday,
-        trainingLog,
-        range: JSON.stringify({ today, fromDate }),
-      }),
-    });
+/**
+ * Main training pipeline execution
+ */
+const runTrainingPipeline = async () => {
+  console.log("🚀 Starting Fitness Training Pipeline");
 
-    console.log("Starting Final Prescription with Director Sportif Agent");
-    const finalPrescription = await client.beta.conversations.start({
-      today,
-      agentId: directorSportifAgent.id,
-      inputs: JSON.stringify({
-        profile,
-        isWeekend: isWeekend(today),
-        yesterday,
-        trainingLog,
-        range: JSON.stringify({ today, fromDate }),
-        wellness: extractAgentOutput(wellness),
-        strategy: extractAgentOutput(strategy),
-      }),
-    });
+  // Initialize
+  const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+  const { fromDate, today, yesterday } = getHistoryRange();
 
-    console.log("Analysis complete, preparing notifications...");
-    await notify({
+  // Prepare data
+  const trainingLog = await prepareTrainingData(fromDate, today);
+  const agents = await initializeAgents(client);
+
+  // Base inputs for all agents
+  const baseInputs = {
+    trainingLog,
+    today,
+    yesterday,
+    profile: config.profile,
+    range: JSON.stringify({ today, fromDate }),
+  };
+
+  // Run analyses in sequence
+  const wellness = await runWellnessAnalysis(
+    client,
+    agents.vitalsSentinelAgent.id,
+    baseInputs,
+  );
+
+  const strategy = await runStrategyAnalysis(
+    client,
+    agents.strategyAgent.id,
+    agents.strategyAgentName,
+    { ...baseInputs, isWeekend: isWeekend(today) },
+  );
+
+  const finalPrescription = await runFinalPrescription(
+    client,
+    agents.directorSportifAgent.id,
+    {
+      ...baseInputs,
+      isWeekend: isWeekend(today),
       wellness: extractAgentOutput(wellness),
       strategy: extractAgentOutput(strategy),
-      finalPrescription: extractAgentOutput(finalPrescription),
-    });
-    console.log("Pipeline completed");
+    },
+  );
 
+  // Send notifications
+  console.log("📧 Analysis complete, preparing notifications...");
+  await notify({
+    wellness: extractAgentOutput(wellness),
+    strategy: extractAgentOutput(strategy),
+    finalPrescription: extractAgentOutput(finalPrescription),
+  });
+
+  console.log("✅ Pipeline completed successfully");
+};
+
+// Main execution with better error handling
+(async () => {
+  try {
+    await runTrainingPipeline();
     process.exit(0);
   } catch (error) {
-    console.error("❌ Pipeline error:", error);
+    console.error("❌ Pipeline failed:", error.message);
+    console.error("Stack trace:", error.stack);
     process.exit(1);
   }
 })();
