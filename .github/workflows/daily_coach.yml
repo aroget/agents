@@ -40,4 +40,5 @@ jobs:
           GMAIL_APP_USER: ${{ secrets.GMAIL_APP_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           DAYS_TO_ANALYZE: ${{ secrets.DAYS_TO_ANALYZE }}
+          TRAINING_PHILOSOPHY: ${{ secrets.TRAINING_PHILOSOPHY }}
         run: node index.js
