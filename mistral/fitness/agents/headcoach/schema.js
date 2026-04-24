@@ -3,44 +3,49 @@ import { z } from "zod";
 export const dsIntervalsSchema = z.object({
   finalPrescriptionTitle: z
     .string()
-    .describe("e.g., Final Prescription – 2026-03-23"),
-  decisionSummary: z.string().describe("Status and Selected Workout"),
-  workoutStructure: z.string().describe(
-    `Strict Intervals.icu workout code. 
-    Rules: 
-    1. Warm-up/Cool-down: "- [Time] [Intensity Type]"
-    2. Intervals: "[N]x" followed by indented "- [Time] [Intensity Type] Ignore [N]x if there is only one main interval. In that case, just use the single line format for that interval."
-    3. Type: Sport Discipline.
-    4. Single Main Set: "- [Time] [Intensity Type]"
-    
-    Intensity Type Examples:
-    - Run: A range of LTHR for low intensity, and  pace for high intensity intervals using the athlete's threshold pace from the profile (e.g., "4:50-5:10 Pace or 60-70% LTHR").
-    - Bike: A range of HR zones for low intensity, and percentage of the athlete's threshold power for high intensity intervals (e.g., "200-220W or or 60-70% LTHR").
-    - Do not mix intensity types within the same workout. If the intervals is using power, all intensity types should be in power. If using pace, all should be in pace or heart rate.
-    
-    Example Output:
-    -15m 6:00-6:30 Pace
+    .describe("e.g., Final Prescription – 2026-04-19"),
 
-    4x
-    -8m 4:50-5:10 Pace
-    -2m 6:30-7:30 Pace
+  decisionSummary: z
+    .string()
+    .describe(
+      "High-level status (GREEN/YELLOW/RED) and the selected workout name.",
+    ),
 
-    -10m 6:00-6:30 Pace`,
+  // THE RAW DATA FOR INTERVALS.ICU - STRICT UNIFORMITY REQUIRED
+  structuredWorkoutCode: z.string().describe(
+    `Strict Intervals.icu syntax. 
+    CRITICAL RULE: Use EXACTLY ONE metric for the entire block (HR, Pace, or Power). 
+    - If RUN + High Intensity: Use Pace for ALL steps (including warm-up/cool-down).
+    - If BIKE + High Intensity: Use Power (Watts or %FTP) for ALL steps.
+    - If Low Intensity/Recovery: Heart Rate is acceptable for ALL steps.
+    
+    NEVER mix units. Example of CORRECT Pace-only workout:
+    - 15m 6:30-7:00 Pace
+    5x
+    - 1km 4:15-4:25 Pace
+    - 500m 7:00-8:00 Pace
+    - 10m 7:00-7:30 Pace`,
   ),
+
+  workoutStructure: z
+    .string()
+    .describe(
+      "Human-readable breakdown for the UI. Can mention multiple metrics for context (e.g., 'Target 250W, keep HR under 155bpm').",
+    ),
 
   coachsWhy: z.object({
     readinessGate: z
       .string()
-      .describe(
-        "Analysis of HRV, Sleep, and specific % drops from the 14-day avg",
-      ),
+      .describe("Analysis of HRV, Sleep, and RHR trends vs 14-day baseline."),
     disciplineRotation: z
       .string()
-      .describe("Analysis of sport frequency (e.g., 'haven't run in 6 days')"),
+      .describe(
+        "Logic for sport selection (e.g., balancing bike/run frequency).",
+      ),
     consistencyOverIntensity: z
       .string()
       .describe(
-        "How this choice protects long-term goals like FTP or race targets",
+        "Strategic justification: how this session fits the current Phase (Base/Build/Peak).",
       ),
   }),
 
@@ -53,72 +58,83 @@ export const dsIntervalsSchema = z.object({
         "VO2_Max",
         "Recovery",
       ])
-      .describe("The physiological system this workout targets."),
+      .describe("The primary physiological system targeted."),
 
     historicalComparison: z
       .string()
       .describe(
-        "A 2-3 sentence summary of how this specific target has trended over the last 30 days for this particular sport. Mention specific improvements like 'Your HR was 4bpm lower at this pace 2 weeks ago'.",
+        "Comparison of HR/Work efficiency against the last 30 days of similar sessions.",
+      ),
+
+    adaptationSignalDetected: z
+      .boolean()
+      .describe(
+        "True if the user is showing improved efficiency (lower HR for same output) over time.",
       ),
 
     targetTrend: z
       .enum(["improving", "stable", "regressing", "new_stimulus"])
+      .describe("The trajectory of fitness in this specific energy system."),
+
+    loadProgressionTarget: z
+      .string()
       .describe(
-        "The trajectory of the user's performance in this specific energy system in this sport",
+        "The specific 'micro-overload' applied today (e.g., +5m duration, +2% intensity) to ensure we aren't just maintaining.",
+      ),
+
+    limiterIdentified: z
+      .string()
+      .describe(
+        "The primary physiological bottleneck detected (e.g., 'Cardiac Drift >5%').",
       ),
 
     suggestedBenchmark: z
       .string()
       .describe(
-        "A specific number or feeling from a previous similar session the athlete should try to beat today.",
+        "A specific metric from a past session for the athlete to aim for.",
       ),
   }),
 
-  // POST-WORKOUT SELF-ANALYSIS GUIDE
   postWorkoutSelfAnalysisChecklist: z.object({
     successCriteria: z
       .string()
-      .describe(
-        "What 'good' looks like for this session (e.g., 'If your pace didn't drop more than 5% in the final set').",
-      ),
+      .describe("Quantitative markers of a successful session."),
     redFlags: z
       .array(z.string())
-      .describe(
-        "Data patterns that suggest the user overreached or needs more recovery.",
-      ),
+      .describe("Signs of overreaching or technical breakdown."),
   }),
 
   nutrition: z
-    .string()
-    .describe(
-      "Pre/During/Post workout nutrition recommendations based on today's session",
-    ),
+    .object({
+      pre: z.string(),
+      during: z.string(),
+      post: z.string(),
+    })
+    .describe("Fueling plan based on workout duration and intensity."),
 
   keyAdjustments: z
     .array(z.string())
     .describe(
-      "List of what was scrapped or modified from the Polarized Strategy",
+      "Changes made to the standard plan based on today's readiness data.",
     ),
+
   tomorrowPreview: z
     .string()
-    .describe("Conditional plan based on expected recovery"),
+    .describe("Conditional 'If/Then' scenarios for tomorrow's training."),
 
   nextSteps: z.object({
     sleepTarget: z.string(),
-    hydration: z.string(),
+    hydration: z.string().describe("Total fluid intake goal."),
     recoveryCheck: z.string(),
   }),
 
-  closingTone: z
-    .string()
-    .describe("The 'Protective but Purposeful' coaching sign-off"),
+  closingTone: z.string().describe("A 'Protective but Purposeful' sign-off."),
 
-  // The final concatenated string for Intervals.icu
-  fullIntervalsNote: z.string().describe(`
-      The entire output as a single string formatted for a note
-      Requirements:
-      1. All section headers must be bolded (e.g., **Coach’s Why**).
-      `),
+  fullIntervalsNote: z
+    .string()
+    .describe(
+      "The entire output formatted as a single Markdown string for the Intervals.icu 'Notes' field.",
+    ),
 });
 
 // Convert Zod schema to JSON Schema for responseFormat using built-in method
