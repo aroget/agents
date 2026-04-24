@@ -235,6 +235,7 @@ export const sanitizeData = (data) => {
     intensity: a.icu_intensity,
     average_watts: a.icu_average_watts,
     weighted_avg_watts: a.icu_weighted_avg_watts,
+    coachNotes: a.coachNotes,
     moving_time_seconds: a.moving_time, // Keep raw seconds for calculations
     weekStart: getMondayOfWeek(a.start_date_local.split("T")[0]), // Add week grouping
   }));
@@ -246,7 +247,6 @@ export const sanitizeData = (data) => {
   return {
     wellness: sanitizedWellness,
     wellnessAnalytics,
-    activitiesByWeek,
     weeklySummaries,
   };
 };

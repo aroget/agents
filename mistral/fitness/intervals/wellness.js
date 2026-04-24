@@ -17,6 +17,7 @@ export async function fetchFullData(from, to) {
   // Define Endpoints
   const activitiesUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/activities?newest=${to}&oldest=${from}`;
   const wellnessUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/wellness.json?newest=${to}&oldest=${from}`;
+  const notesUrl = `https://intervals.icu/api/v1/athlete/${ATHLETE_ID}/events?oldest=${from}&newest=${to}`;
 
   try {
     console.log("Fetching data from Intervals.icu...");
@@ -24,12 +25,36 @@ export async function fetchFullData(from, to) {
     const headers = { Authorization: `Basic ${auth}` };
 
     // Fetch both simultaneously
-    const [actRes, wellRes] = await Promise.all([
+    const [actRes, wellRes, notesRes] = await Promise.all([
       fetch(activitiesUrl, { headers }),
       fetch(wellnessUrl, { headers }),
+      fetch(notesUrl, { headers }),
     ]);
 
     const activities = await actRes.json();
+    const notes = await notesRes.json();
+    const activitiesWithNotes = activities.map((activity) => {
+      const activityDate = activity.start_date_local.split("T")[0]; // Extract date part
+
+      // Find notes for this activity date
+      const matchingNotes = notes.filter((note) => {
+        const noteDate = note.date || note.start_date_local?.split("T")[0];
+        return noteDate === activityDate;
+      });
+
+      // Combine notes into single coach note or keep as array
+      const coachNotes =
+        matchingNotes.length > 0
+          ? matchingNotes
+              .map((note) => note.description || note.name || note.text)
+              .join("\n")
+          : null;
+
+      return {
+        ...activity,
+        coachNotes,
+      };
+    });
 
     let wellness = [];
     if (wellRes.ok) {
@@ -41,7 +66,7 @@ export async function fetchFullData(from, to) {
 
     const twoWeekSnapshot = {
       period: `${from} to ${to}`,
-      activities: activities,
+      activities: activitiesWithNotes,
       wellness: wellness,
     };
 

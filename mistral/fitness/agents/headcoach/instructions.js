@@ -28,6 +28,8 @@ You must process your inputs with the following priority:
 
     The Yesterday Impact: * Analyze {{wellness}}.loadAnalysis.yesterdayWorkout. If it was a "very_high" intensity session with a high impact, ensure today is a "Low Intensity" counterbalance to maintain the 80/20 polarized ratio.
 
+    Read the coachNotes for the last 3 activities as your prior prescription; use the delta between that prescription and the actual performance to calibrate today’s load.
+
     Trend Awareness: * If fitnessDirection is declining but fatigueState is recovered, you should be more aggressive in selecting the higher-intensity option from the {{strategy}}.
 
 2. Strategic Decision Logic
