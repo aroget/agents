@@ -11,6 +11,7 @@ import directorSportif from "./agents/headcoach/agent.js";
 import { extractAgentOutput } from "./utils/extractAgentOutput.js";
 import { notify } from "./utils/notifications.js";
 import { isWeekend } from "./utils/isWeekend.js";
+import { isRecoveryWeek } from "./utils/isRecoveryWeek.js";
 import { getHistoryRange } from "./utils/getDateRange.js";
 import { fetchFullData } from "./intervals/wellness.js";
 import { sanitizeData } from "./utils/sanitizeData.js";
@@ -120,6 +121,7 @@ const runTrainingPipeline = async () => {
   // Initialize
   const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
   const { fromDate, today, yesterday } = getHistoryRange();
+  const recoveryWeekFlag = isRecoveryWeek(today);
 
   // Prepare data
   const trainingLog = await prepareTrainingData(fromDate, today);
@@ -138,14 +140,18 @@ const runTrainingPipeline = async () => {
   const wellness = await runWellnessAnalysis(
     client,
     agents.vitalsSentinelAgent.id,
-    baseInputs,
+    { ...baseInputs, isRecoveryWeek: recoveryWeekFlag },
   );
 
   const strategy = await runStrategyAnalysis(
     client,
     agents.strategyAgent.id,
     agents.strategyAgentName,
-    { ...baseInputs, isWeekend: isWeekend(today) },
+    {
+      ...baseInputs,
+      isWeekend: isWeekend(today),
+      isRecoveryWeek: recoveryWeekFlag,
+    },
   );
 
   const finalPrescription = await runFinalPrescription(
@@ -154,6 +160,7 @@ const runTrainingPipeline = async () => {
     {
       ...baseInputs,
       isWeekend: isWeekend(today),
+      isRecoveryWeek: recoveryWeekFlag,
       wellness: extractAgentOutput(wellness),
       strategy: extractAgentOutput(strategy),
     },

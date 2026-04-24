@@ -88,7 +88,8 @@ export const wellnessResponseSchema = z.object({
       deviationFromBaseline: z.number(),
     }),
   }),
-  trendAnalysis: z.object({
+
+  biomarkerTrends: z.object({
     hrv: z.object({
       threeDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
       sevenDayTrend: z.enum(["IMPROVING", "DECLINING", "STABLE"]),
@@ -116,6 +117,7 @@ export const wellnessResponseSchema = z.object({
     currentlyRecovering: z.boolean(),
     baselineShiftSuspected: z.boolean(),
   }),
+
   trendAnalysis: z.object({
     overview: z.string(),
     fitnessDirection: z.enum([
@@ -131,6 +133,57 @@ export const wellnessResponseSchema = z.object({
       "unknown",
     ]),
     keyInsight: z.string(),
+  }),
+
+  recoveryWeekResponse: z.object({
+    isRecoveryWeek: z.boolean(),
+    comparisonWindow: z.object({
+      currentWeekStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      previousWeekStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      loadWeeksConsidered: z.number().int().min(0),
+    }),
+    comparisonAgainstLoadWeeks: z.object({
+      hrv: z.object({
+        recoveryWeekAvg: z.number().nullable(),
+        loadWeeksAvg: z.number().nullable(),
+        deltaPercentage: z.number().nullable(),
+        response: z.enum([
+          "IMPROVING",
+          "STABLE",
+          "WORSENING",
+          "INSUFFICIENT_DATA",
+        ]),
+      }),
+      rhr: z.object({
+        recoveryWeekAvg: z.number().nullable(),
+        loadWeeksAvg: z.number().nullable(),
+        deltaPercentage: z.number().nullable(),
+        response: z.enum([
+          "IMPROVING",
+          "STABLE",
+          "WORSENING",
+          "INSUFFICIENT_DATA",
+        ]),
+      }),
+      sleepScore: z.object({
+        recoveryWeekAvg: z.number().nullable(),
+        loadWeeksAvg: z.number().nullable(),
+        deltaPercentage: z.number().nullable(),
+        response: z.enum([
+          "IMPROVING",
+          "STABLE",
+          "WORSENING",
+          "INSUFFICIENT_DATA",
+        ]),
+      }),
+    }),
+    overallResponse: z.enum([
+      "POSITIVE_ADAPTATION",
+      "MIXED_ADAPTATION",
+      "POOR_ADAPTATION",
+      "INSUFFICIENT_DATA",
+    ]),
+    coachingInterpretation: z.string(),
   }),
 });
 
