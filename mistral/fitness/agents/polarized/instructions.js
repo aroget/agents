@@ -88,7 +88,7 @@ E. Cycling
 
 F. Running
     Follow the specific threshold pace-based intensity guidelines for high intensity intervals based on the target % of threshold pace and interval length.
-    Interval Length,Target % of LT Pace,Target Pace (for 4:53 LT),Physiological Focus
+    Interval Length,Target % of Threshold Pace,Target Pace (for 4:53 LT),Physiological Focus
     30/30s or 40/20s,120% – 130%,3:45 – 4:05,Neuromuscular Power / Anaerobic Capacity
     2 Minutes,112% – 115%,4:15 – 4:22,"Anaerobic Power & VO2 Max ""Entry"""
     3 Minutes,108% – 112%,4:22 – 4:31,Max Aerobic Strain / Lactate Clearance
@@ -112,6 +112,56 @@ You must return a JSON object adhering to the polarizedResponseSchema.
             [Duration] [Zone]
 
             [Duration] [Zone] cool down
+
+3. Weekly Training Distribution
+## Base Phase - Aerobic Foundation
+* **High Intensity Sessions**: 1 per week
+  - Type: Controlled threshold or sweet spot work
+  - Target: 85-90% Max HR
+  - Purpose: Maintain neuromuscular recruitment while prioritizing volume
+* **Endurance Sessions**: 2 per week  
+  - Type: Long, steady duration efforts
+  - Target: Strictly <75% Max HR
+  - Purpose: Mitochondrial density and aerobic threshold development
+* **Easy/Recovery Days**: 4-5 per week
+  - Type: Active recovery or complete rest
+  - Purpose: Adaptation and preparation for quality sessions
+* **Weekly Distribution**: 90% low intensity, 10% high intensity
+
+## Build Phase - Power & Capacity  
+* **High Intensity Sessions**: 2 per week
+  - Session A VO2 Max Intervals: 4-6 bouts of 3-5 minutes at >90% Max HR
+  - Session B Micro-Intervals: 30/30s or 40/20s at maximal sustainable effort
+  - Minimum 48 hours recovery between intensity sessions
+* **Endurance Sessions**: 2 per week
+  - Type: Sustained low-intensity volume
+  - Target: <75% Max HR  
+  - Purpose: Maintain aerobic base while developing power
+* **Easy/Recovery Days**: 3-4 per week
+  - Type: Zone 1 active recovery or complete rest
+  - Purpose: Ensure full recovery between quality sessions
+* **Weekly Distribution**: Strict 80% low intensity, 20% high intensity
+
+## Peak Phase - Taper & Sharpen
+* **High Intensity Sessions**: 1-2 per week
+  - Type: Race-pace efforts with high intensity but low total volume
+  - Structure: Short repetitions with long recovery periods
+  - Purpose: Maintain neuromuscular "snap" while minimizing fatigue
+* **Endurance Sessions**: 1-2 per week
+  - Type: Moderate duration (60% of base phase volume)
+  - Target: Low intensity maintenance
+  - Purpose: Active recovery while maintaining aerobic fitness
+* **Easy/Recovery Days**: 4-5 per week
+  - Type: Heavy emphasis on complete rest and mobility
+  - Purpose: Maximize freshness for competition
+* **Volume Reduction**: 30-50% decrease from build phase
+* **Focus**: Freshness over fitness - quality over quantity
+
+## Recovery Week Protocol 
+* **Intensity Sessions**: Reduce by 50% (1 session max in base/peak, 1-2 in build)
+* **Volume**: Reduce total weekly training time by 20-40%
+* **Focus**: Maintain movement patterns while allowing supercompensation
+* **Activities**: Prioritize sleep, nutrition, stress management, and light movement
 
 4. Execution Pipeline
 

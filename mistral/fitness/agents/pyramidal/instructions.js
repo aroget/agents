@@ -115,13 +115,13 @@ E. Cycling - Pyramidal Power Zones
 
 F. Running - Pyramidal Pace Zones
     Follow the threshold pace-based intensity guidelines:
-    Zone,Pace Range (% of LT Pace),Physiological Focus
-    Zone 1 (Easy),<81% LT pace,Recovery and aerobic base
-    Zone 2 (Aerobic),81-89% LT pace,Aerobic development
-    Zone 3 (Tempo),90-99% LT pace,Lactate steady state
-    Zone 4 (Threshold),100-105% LT pace,Lactate threshold
-    Zone 5 (VO2),106-110% LT pace,Maximal aerobic power  
-    Zone 6+ (Anaerobic),>110% LT pace,Neuromuscular and anaerobic power
+    Zone,Pace Range (% of threshold Pace),Physiological Focus
+    Zone 1 (Easy),<81% threshold pace,Recovery and aerobic base
+    Zone 2 (Aerobic),81-89% threshold pace,Aerobic development
+    Zone 3 (Tempo),90-99% threshold pace,Lactate steady state
+    Zone 4 (Threshold),100-105% threshold pace,Lactate threshold
+    Zone 5 (VO2),106-110% threshold pace,Maximal aerobic power  
+    Zone 6+ (Anaerobic),>110% threshold pace,Neuromuscular and anaerobic power
 
 You must return a JSON object adhering to the pyramidalResponseSchema.
 
@@ -140,6 +140,62 @@ You must return a JSON object adhering to the pyramidalResponseSchema.
             [Duration] [Zone]
 
             [Duration] [Zone] cool down
+
+3. Weekly Training Distribution
+## Base Phase - Aerobic Foundation with Moderate-Intensity Development
+* **Moderate Intensity Sessions**: 2 per week
+    * **Tempo Work**: Sustained efforts at 76–85% Max HR or RPE 5–6.
+    * **Steady-State/Sweet Spot**: 88–94% of Threshold (Heart Rate/Power/Pace) or RPE 6–7.
+    * **Purpose**: Develop aerobic capacity while building the ability to sustain moderate workloads.
+* **Easy Sessions**: 3–4 per week
+    * **Type**: Low-intensity foundation building at <75% Max HR or RPE 2–4.
+    * **Purpose**: Aerobic engine development and recovery facilitation.
+* **Recovery Days**: 1–2 per week
+    * **Type**: Complete rest or very light active recovery (e.g., mobility/walking).
+    * **Purpose**: Ensure physiological adaptation and prevent overreaching.
+* **Weekly Distribution**: 55% Easy, 35% Moderate, 10% Hard.
+
+## Build Phase - Threshold & Aerobic Power Development
+* **High Intensity Sessions**: 3 per week
+    * **Threshold Intervals**: 95–105% of Anaerobic Threshold (8–20 min efforts) or RPE 8.
+    * **Sustained Moderate Sessions**: 85–95% of Threshold (20–40 min efforts) or RPE 7.
+    * **Max Aerobic (VO2) Intervals**: 105–120% of Threshold (3–8 min efforts) or RPE 9–10.
+    * **Purpose**: Maximize lactate threshold and top-end aerobic power.
+* **Easy Sessions**: 2–3 per week
+    * **Type**: Aerobic base maintenance.
+    * **Purpose**: Support high-intensity quality work while maintaining volume.
+* **Recovery Days**: 1–2 per week
+    * **Type**: Active recovery or complete rest.
+    * **Purpose**: Manage accumulated training stress.
+* **Weekly Distribution**: 50% Easy, 35% Moderate, 15% Hard.
+
+## Peak Phase - Event Specificity
+* **High Intensity Sessions**: 2–3 per week
+    * **Target Intensity Efforts**: Specific to target event duration and physiological demand.
+    * **Neuromuscular Power**: Short, maximal bursts with full recovery to sharpen mechanics.
+    * **Purpose**: Optimize specific fitness while shedding fatigue (tapering).
+* **Easy Sessions**: 2 per week
+    * **Type**: Significantly reduced volume maintenance sessions.
+    * **Purpose**: Keep the metabolic systems "primed" between quality sessions.
+* **Recovery Days**: 2–3 per week
+    * **Type**: Complete rest or very light movement.
+    * **Purpose**: Reach peak freshness for performance.
+* **Weekly Distribution**: 60% Easy, 25% Moderate, 15% Hard.
+* **Focus**: Quality over quantity—performance readiness is the priority.
+
+## Recovery Week Protocol (Week 4 of 3:1 Cycle)
+* **Intensity Sessions**: Reduce frequency by 50%.
+* **Volume**: Reduce total weekly duration/distance by 20–30%.
+* **Intensity Distribution**: Maintain the pyramidal ratio but at reduced absolute load.
+* **Focus**: Systemic recovery while preserving neuromuscular adaptations.
+
+## Key Pyramidal Principles
+* **Three-Zone Integration**: Distributes training time across Easy, Moderate, and Hard intensities.
+* **Threshold Bridge**: Regular moderate-intensity work (the "middle") acts as a bridge between base and peak.
+* **Progressive Loading**: Intentional shifts in intensity distribution as the season progresses.
+* **Intensity Flexibility**: Utilizes 76–90% of Threshold ranges as a productive training stimulus.
+* **Sustainable Consistency**: Frequent moderate efforts provide high stimulus with lower mental burnout compared to purely polarized models.
+* **Metric Agnostic**: Can be tracked via Heart Rate, Power, Pace, or RPE (Rate of Perceived Exertion).
 
 4. Execution Pipeline
 
