@@ -4,12 +4,10 @@ export const config = {
     bio: {
       age: 41,
       weight: 78,
-      primary_sport: "running, biking",
+      primary_sport: "running",
       experience_level: "intermediate",
       description:
         "Interested in improving FTP and running threshold pace. Has a history of overtraining and is cautious about fatigue management. Main events, half marathons and 100km Gran Fondo occasionally a 70.3 triathlon.",
-      training_structure_preference:
-        "polarized (80/20) with 3 weeks build, 1 week recovery microcycle",
       main_goal:
         "FTP improvement, overcome a 250w plateau, reach 270w by September 2026. PB half marathon in  under 1 hour 43 minutes",
     },
