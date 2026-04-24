@@ -1,11 +1,11 @@
 export const config = {
   model: "mistral-large-latest",
   cycleStartDate: "2026-04-06", // Monday that begins the current 4-week cycle (3 load + 1 recovery)
+  sports: ["running"], // All sports the athlete trains — drives schema enums and agent suggestions
   profile: {
     bio: {
       age: 41,
       weight: 78,
-      primary_sport: "running",
       experience_level: "intermediate",
       description:
         "Interested in improving FTP and running threshold pace. Has a history of overtraining and is cautious about fatigue management. Main events, half marathons and 100km Gran Fondo occasionally a 70.3 triathlon.",

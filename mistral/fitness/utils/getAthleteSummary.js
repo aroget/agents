@@ -24,22 +24,22 @@ export function getAthleteSummary(wellnessData) {
   return {
     date: yesterday.id,
     current_vitals: {
-      hrv: yesterday.hrv,
-      rhr: yesterday.restingHR,
-      sleep_score: yesterday.sleepScore,
-      tss_load: yesterday.ctlLoad, // or atlLoad depending on preference
+      hrv: yesterday.hrv ?? null,
+      rhr: yesterday.restingHR ?? null,
+      sleep_score: yesterday.sleepScore ?? null,
+      tss_load: yesterday.ctlLoad ?? null,
     },
     baseline_14d: {
-      avg_hrv: avgHRV.toFixed(1),
-      avg_rhr: avgRHR.toFixed(1),
+      avg_hrv: avgHRV != null ? Number(avgHRV.toFixed(1)) : null,
+      avg_rhr: avgRHR != null ? Number(avgRHR.toFixed(1)) : null,
     },
     deltas: {
-      hrv_percent: hrvDelta.toFixed(1) + "%",
+      hrv_percent: avgHRV != null ? hrvDelta.toFixed(1) + "%" : null,
     },
     trends: {
-      ctl: yesterday.ctl.toFixed(1),
-      atl: yesterday.atl.toFixed(1),
-      ramp_rate: yesterday.rampRate.toFixed(2),
+      ctl: yesterday.ctl != null ? Number(yesterday.ctl.toFixed(1)) : null,
+      atl: yesterday.atl != null ? Number(yesterday.atl.toFixed(1)) : null,
+      ramp_rate: yesterday.rampRate != null ? Number(yesterday.rampRate.toFixed(2)) : null,
     },
   };
 }

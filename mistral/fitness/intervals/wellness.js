@@ -32,7 +32,7 @@ export async function fetchFullData(from, to) {
     ]);
 
     const activities = await actRes.json();
-    const notes = await notesRes.json();
+    const notes = actRes.ok && activities.length > 0 ? await notesRes.json() : [];
     const activitiesWithNotes = activities.map((activity) => {
       const activityDate = activity.start_date_local.split("T")[0]; // Extract date part
 

@@ -13,6 +13,7 @@ import {
   groupActivitiesByWeek,
   createWeeklySummaries,
 } from "./data-processing/weeklyUtils.js";
+import { isRecoveryWeek } from "./isRecoveryWeek.js";
 
 export const sanitizeData = (data) => {
   const sanitizedWellness = data.wellness.map((w) => ({
@@ -243,10 +244,53 @@ export const sanitizeData = (data) => {
   // Group activities by week and create summaries
   const activitiesByWeek = groupActivitiesByWeek(sanitizedActivities);
   const weeklySummaries = createWeeklySummaries(activitiesByWeek);
+  const currentWeekSummary =
+    weeklySummaries.length > 0
+      ? weeklySummaries[weeklySummaries.length - 1]
+      : null;
+
+  const weeklyPhases = Object.fromEntries(
+    weeklySummaries.map((week) => [
+      week.weekStart,
+      isRecoveryWeek(week.weekStart) ? "recovery" : "load",
+    ]),
+  );
+
+  const averageMetric = (entries, metric) => {
+    const values = entries.map((entry) => entry[metric]).filter((v) => v != null);
+    if (values.length === 0) return null;
+    const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
+    return Number(avg.toFixed(2));
+  };
+
+  const buildPhaseAverages = (entries) => ({
+    entries: entries.length,
+    hrvAvg: averageMetric(entries, "hrv"),
+    rhrAvg: averageMetric(entries, "restingHR"),
+    sleepScoreAvg: averageMetric(entries, "sleepScore"),
+  });
+
+  const loadWeekWellness = sanitizedWellness.filter((entry) => {
+    const weekStart = getMondayOfWeek(entry.date);
+    return weeklyPhases[weekStart] === "load";
+  });
+
+  const recoveryWeekWellness = sanitizedWellness.filter((entry) => {
+    const weekStart = getMondayOfWeek(entry.date);
+    return weeklyPhases[weekStart] === "recovery";
+  });
+
+  wellnessAnalytics.phaseAverages = {
+    load: buildPhaseAverages(loadWeekWellness),
+    recovery: buildPhaseAverages(recoveryWeekWellness),
+  };
 
   return {
     wellness: sanitizedWellness,
     wellnessAnalytics,
     weeklySummaries,
+    currentWeekSummary,
+    weeklyPhases,
+    activities: sanitizedActivities,
   };
 };

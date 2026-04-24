@@ -16,6 +16,7 @@ import { getHistoryRange } from "./utils/getDateRange.js";
 import { fetchFullData } from "./intervals/wellness.js";
 import { sanitizeData } from "./utils/sanitizeData.js";
 import { removeNulls } from "./utils/removeNulls.js";
+import { getAthleteSummary } from "./utils/getAthleteSummary.js";
 
 dotenv.config({ quiet: true });
 
@@ -127,20 +128,37 @@ const runTrainingPipeline = async () => {
   const trainingLog = await prepareTrainingData(fromDate, today);
   const agents = await initializeAgents(client);
 
-  // Base inputs for all agents
+  // Pre-compute shared context values
+  const athleteSummary = getAthleteSummary(trainingLog.wellness);
+  const { currentWeekSummary, weeklyPhases } = trainingLog;
+
+  // Base inputs shared by strategy + headcoach (full trainingLog)
   const baseInputs = {
     trainingLog,
     today,
     yesterday,
     profile: config.profile,
-    range: JSON.stringify({ today, fromDate }),
+    sports: config.sports,
+    athleteSummary,
+    currentWeekSummary,
+  };
+
+  // Scoped inputs for wellness agent — only what it needs, no heavy activities array
+  const wellnessInputs = {
+    sanitizedWellness: trainingLog.wellness,
+    wellnessAnalytics: trainingLog.wellnessAnalytics,
+    weeklyPhases,
+    today,
+    yesterday,
+    athleteSummary,
+    isRecoveryWeek: recoveryWeekFlag,
   };
 
   // Run analyses in sequence
   const wellness = await runWellnessAnalysis(
     client,
     agents.vitalsSentinelAgent.id,
-    { ...baseInputs, isRecoveryWeek: recoveryWeekFlag },
+    wellnessInputs,
   );
 
   const strategy = await runStrategyAnalysis(

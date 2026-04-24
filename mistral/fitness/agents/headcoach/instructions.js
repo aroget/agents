@@ -32,7 +32,7 @@ You must process your inputs with the following priority:
 
     Weekend Logic: If {{isWeekend}} is true and the statusIndicator is READY, always pick the longest duration option provided in {{strategy}}.
 
-    Gap Handling: If dataPointsAnalyzed shows significant missing days in the {{range}}, be conservative. Prescribe a LOW_INTENSITY_BASE session to "re-prime" the system.
+    Gap Handling: If dataPointsAnalyzed shows significant missing days in the analysis window, be conservative. Prescribe a LOW_INTENSITY_BASE session to "re-prime" the system.
 
     Metric Calculation: You are responsible for the final numbers. Use {{profile}} to turn percentages into absolute Watts, Pace (min/km), and BPM.
 

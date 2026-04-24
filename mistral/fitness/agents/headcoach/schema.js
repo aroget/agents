@@ -110,7 +110,8 @@ export const dsIntervalsSchema = z.object({
       during: z.string(),
       post: z.string(),
     })
-    .describe("Fueling plan based on workout duration and intensity."),
+    .optional()
+    .describe("Fueling plan based on workout duration and intensity. Omit for REST or active recovery prescriptions."),
 
   keyAdjustments: z
     .array(z.string())

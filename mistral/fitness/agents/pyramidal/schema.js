@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { config } from "../../config.js";
 
+const { sports } = config;
+
 // Define the Zod schema for pyramidal response
 export const pyramidalResponseSchema = z.object({
   model: z.enum(["TRADITIONAL_PYRAMIDAL", "THRESHOLD_FOCUSED", "TEMPO_BASED"]),
@@ -87,10 +89,10 @@ export const pyramidalResponseSchema = z.object({
           -10m 6:00-6:30 Pace`,
       ),
       sportPriority: z
-        .enum(config.profile.bio.primary_sport.split("|"))
+        .enum(sports)
         .describe("Recommended sport for this session"),
     }),
-  ),
+  ).min(1),
 });
 
 // Convert Zod schema to JSON Schema for responseFormat using built-in method
