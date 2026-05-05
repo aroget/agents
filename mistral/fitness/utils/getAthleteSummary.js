@@ -39,7 +39,10 @@ export function getAthleteSummary(wellnessData) {
     trends: {
       ctl: yesterday.ctl != null ? Number(yesterday.ctl.toFixed(1)) : null,
       atl: yesterday.atl != null ? Number(yesterday.atl.toFixed(1)) : null,
-      ramp_rate: yesterday.rampRate != null ? Number(yesterday.rampRate.toFixed(2)) : null,
+      ramp_rate:
+        yesterday.rampRate != null
+          ? Number(yesterday.rampRate.toFixed(2))
+          : null,
     },
   };
 }

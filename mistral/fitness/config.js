@@ -1,7 +1,7 @@
 export const config = {
   model: "mistral-large-latest",
   cycleStartDate: "2026-04-06", // Monday that begins the current 4-week cycle (3 load + 1 recovery)
-  sports: ["running"], // All sports the athlete trains — drives schema enums and agent suggestions
+  sports: ["running", "cycling"], // All sports the athlete trains — drives schema enums and agent suggestions
   profile: {
     bio: {
       age: 41,

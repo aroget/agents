@@ -257,7 +257,9 @@ export const sanitizeData = (data) => {
   );
 
   const averageMetric = (entries, metric) => {
-    const values = entries.map((entry) => entry[metric]).filter((v) => v != null);
+    const values = entries
+      .map((entry) => entry[metric])
+      .filter((v) => v != null);
     if (values.length === 0) return null;
     const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
     return Number(avg.toFixed(2));

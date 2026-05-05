@@ -57,10 +57,11 @@ export const polarizedResponseSchema = z.object({
       .string()
       .describe("How to maintain or correct the 80/20 distribution"),
   }),
-  suggestions: z.array(
-    z.object({
-      workoutStructure: z.string().describe(
-        `Strict Intervals.icu workout code. 
+  suggestions: z
+    .array(
+      z.object({
+        workoutStructure: z.string().describe(
+          `Strict Intervals.icu workout code. 
           Rules: 
           1. Warm-up/Cool-down: "- [Time] [Intensity Type]"
           2. Intervals: "[N]x" followed by indented "- [Time] [Intensity Type] Ignore [N]x if there is only one main interval. In that case, just use the single line format for that interval."
@@ -80,12 +81,13 @@ export const polarizedResponseSchema = z.object({
           -2m 6:30-7:30 Pace
 
           -10m 6:00-6:30 Pace`,
-      ),
-      sportPriority: z
-        .enum(sports)
-        .describe("Recommended sport for this session"),
-    }),
-  ).min(1),
+        ),
+        sportPriority: z
+          .enum(sports)
+          .describe("Recommended sport for this session"),
+      }),
+    )
+    .min(1),
 });
 
 // Convert Zod schema to JSON Schema for responseFormat using built-in method

@@ -111,17 +111,15 @@ export const dsIntervalsSchema = z.object({
       post: z.string(),
     })
     .optional()
-    .describe("Fueling plan based on workout duration and intensity. Omit for REST or active recovery prescriptions."),
+    .describe(
+      "Fueling plan based on workout duration and intensity. Omit for REST or active recovery prescriptions.",
+    ),
 
   keyAdjustments: z
     .array(z.string())
     .describe(
       "Changes made to the standard plan based on today's readiness data.",
     ),
-
-  tomorrowPreview: z
-    .string()
-    .describe("Conditional 'If/Then' scenarios for tomorrow's training."),
 
   nextSteps: z.object({
     sleepTarget: z.string(),

@@ -29,3 +29,5 @@ mistral/fitness/training/
 
 # TODO files - ignore anywhere
 **/TODO.md
+
+mistral/agency/**/*
