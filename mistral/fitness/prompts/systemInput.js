@@ -34,4 +34,8 @@ Below a list of inputs you may receive a stringified JSON object containing:
 
 {{yesterday}}: Yesterday's date (YYYY-MM-DD). Use this to look up the most recent workout and its impact on today's wellness metrics.
 
+{{yesterdayWorkout}}: Pre-computed summary of yesterday's session — \`{ intensity, duration, impact }\`. Derived from actual activity data (not the wellness endpoint, which can lag 24h). Passed to strategy agents and the Director Sportif for load-impact assessment.
+
+{{loadAnalytics}}: Pre-computed load analysis — \`{ recoveryDebt, expectedRecoveryDays, previous48h: { cumulativeStress, response } }\`. Derived from actual activity data and TSB. Provided to the wellness agent; copy these values verbatim into \`loadAnalysis\` in the output.
+
 `;

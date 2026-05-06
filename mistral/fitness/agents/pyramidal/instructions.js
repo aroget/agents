@@ -224,7 +224,7 @@ You must return a JSON object adhering to the pyramidalResponseSchema.
     - Determine overall fatigueState: FRESH, MODERATE, HIGH, CRITICAL
 
     **Yesterday's Session Impact**: 
-    - Locate {{yesterday}} in {{trainingLog}} and extract intensity distribution, if not found assume REST and check for any wellness indicators of fatigue
+    - Use pre-computed \`{{yesterdayWorkout}}\` for yesterday's intensity and impact — it is derived from actual activity data and immune to the 24h wellness endpoint lag. Do not scan \`{{trainingLog}}\` manually for yesterday.
     - Calculate session impact on weekly pyramidal balance
     - Assess recovery needs based on session type and duration
     - Flag if intensity step-back is required

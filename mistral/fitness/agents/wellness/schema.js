@@ -45,11 +45,6 @@ export const wellnessResponseSchema = z.object({
   }),
 
   loadAnalysis: z.object({
-    yesterdayWorkout: z.object({
-      intensity: z.enum(["REST", "LOW", "MODERATE", "HIGH", "VERY_HIGH"]),
-      duration: z.number(), // minutes
-      impact: z.enum(["MINIMAL", "MODERATE", "HIGH", "VERY_HIGH"]),
-    }),
     recoveryDebt: z.number(), // calculated from training load
     expectedRecoveryDays: z.number(), // based on patterns
     trainingLoadAlignment: z.enum(["ALIGNED", "MISALIGNED"]), // metrics vs load

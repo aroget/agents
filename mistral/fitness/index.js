@@ -72,10 +72,10 @@ const initializeAgents = async (client) => {
 /**
  * Prepare training data from intervals
  */
-const prepareTrainingData = async (fromDate, today) => {
+const prepareTrainingData = async (fromDate, today, yesterday) => {
   console.log(`📊 Fetching training data from ${fromDate} to ${today}`);
   const rawData = await fetchFullData(fromDate, today);
-  return removeNulls(sanitizeData(rawData));
+  return removeNulls(sanitizeData(rawData, { yesterday }));
 };
 
 /**
@@ -125,12 +125,12 @@ const runTrainingPipeline = async () => {
   const recoveryWeekFlag = isRecoveryWeek(today);
 
   // Prepare data
-  const trainingLog = await prepareTrainingData(fromDate, today);
+  const trainingLog = await prepareTrainingData(fromDate, today, yesterday);
   const agents = await initializeAgents(client);
 
   // Pre-compute shared context values
   const athleteSummary = getAthleteSummary(trainingLog.wellness);
-  const { currentWeekSummary, weeklyPhases } = trainingLog;
+  const { currentWeekSummary, weeklyPhases, yesterdayWorkout, loadAnalytics } = trainingLog;
 
   // Base inputs shared by strategy + headcoach (full trainingLog)
   const baseInputs = {
@@ -141,6 +141,7 @@ const runTrainingPipeline = async () => {
     sports: config.sports,
     athleteSummary,
     currentWeekSummary,
+    yesterdayWorkout,
   };
 
   // Scoped inputs for wellness agent — only what it needs, no heavy activities array
@@ -152,6 +153,7 @@ const runTrainingPipeline = async () => {
     yesterday,
     athleteSummary,
     isRecoveryWeek: recoveryWeekFlag,
+    loadAnalytics,
   };
 
   // Run analyses in sequence

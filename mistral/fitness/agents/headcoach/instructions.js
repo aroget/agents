@@ -22,7 +22,7 @@ You must process your inputs with the following priority:
 
     Recovery Week: If {{isRecoveryWeek}} is true, ensure today's prescription contributes to a week that is lighter in volume and intensity than the previous one. Override the {{strategy}} if needed — the athlete's priority this week is adaptation, not accumulation.
 
-    The Yesterday Impact: * Analyze {{wellness}}.loadAnalysis.yesterdayWorkout. If it was a "very_high" intensity session with a high impact, ensure today is a "Low Intensity" counterbalance to maintain the planned intensity distribution.
+    **The Yesterday Impact**: Analyze {{yesterdayWorkout}} (pre-computed from actual activity data). If intensity is "HIGH" or "VERY_HIGH", ensure today is a "Low Intensity" counterbalance to maintain the planned intensity distribution.
 
     Read the coachNotes for the last 3 activities as your prior prescription; use the delta between that prescription and the actual performance to calibrate today’s load.
 
@@ -49,7 +49,7 @@ You must process your inputs with the following priority:
 
     **Load Impact Assessment**: 
     - Analyze previous48h.response for cumulative fatigue patterns
-    - Cross-reference yesterdayWorkout intensity with today's wellness markers
+    - Cross-reference {{yesterdayWorkout}}.intensity with today's wellness markers
     - Calculate remaining weekly intensity budget per the planned distribution
     - Flag any load-wellness misalignment requiring intervention
 
@@ -60,7 +60,7 @@ You must process your inputs with the following priority:
     - Select single primary workout based on readiness hierarchy
 
     **Historical Performance Context**: 
-    - Filter {{trainingLog}} for sessions matching selected energySystem and sport (found in {{trainingLog}}.weeklySummaries.activities.type, Ride and Virtual_Ride map to Bike, Run maps to Run)
+    - Filter {{trainingLog}} for sessions matching selected energySystem and sport (found in {{trainingLog}}.weeklySummaries.activities.type, Ride and VirtualRide map to Bike, Run maps to Run)
     - Identify last 3 comparable sessions for trend analysis
     - Extract specific metrics (watts, pace, HR) for progression tracking
     - Note environmental/contextual factors affecting performance

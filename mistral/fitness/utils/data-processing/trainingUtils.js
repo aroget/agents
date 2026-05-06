@@ -12,14 +12,19 @@ export const getHighIntensityTime = (activity) => {
 
 export const isHardSession = (activity) => {
   const highIntensityTime = getHighIntensityTime(activity);
+  const totalMovingTime = activity.moving_time_seconds || 0;
   const highIntensityThreshold = 10 * 60; // 10 minutes in seconds
-  const highTrainingLoadThreshold = 60; // TSS threshold
+  const highIntensityRatioThreshold = 0.15; // 15% of session in high HR zones
 
-  return (
-    highIntensityTime > highIntensityThreshold ||
-    (activity.training_load &&
-      activity.training_load > highTrainingLoadThreshold)
-  );
+  // A session is hard if it has meaningful time in high HR zones (absolute OR relative).
+  // Avoids misclassifying long base sessions (high TSS, no intensity) as hard,
+  // while correctly catching short hard sessions (low TSS, high HR zone time).
+  const absoluteCheck = highIntensityTime > highIntensityThreshold;
+  const ratioCheck =
+    totalMovingTime > 0 &&
+    highIntensityTime / totalMovingTime > highIntensityRatioThreshold;
+
+  return absoluteCheck || ratioCheck;
 };
 
 export const sumZoneTimes = (activities, zoneField) => {

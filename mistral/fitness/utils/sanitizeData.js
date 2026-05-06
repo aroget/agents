@@ -15,7 +15,78 @@ import {
 } from "./data-processing/weeklyUtils.js";
 import { isRecoveryWeek } from "./isRecoveryWeek.js";
 
-export const sanitizeData = (data) => {
+const computeLoadAnalytics = (activities, wellness, yesterday) => {
+  const dayBeforeYesterday = yesterday
+    ? new Date(new Date(yesterday).getTime() - 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0]
+    : null;
+
+  const recentLoad = activities
+    .filter((a) => a.date === yesterday || a.date === dayBeforeYesterday)
+    .reduce((sum, a) => sum + (a.training_load ?? 0), 0);
+
+  const latestWellness = wellness[wellness.length - 1];
+  const tsb = latestWellness?.trainingStressBalance ?? 0;
+  const recoveryDebt = Math.max(0, Math.round(-tsb));
+
+  let expectedRecoveryDays;
+  if (recoveryDebt < 5) expectedRecoveryDays = 0;
+  else if (recoveryDebt < 15) expectedRecoveryDays = 1;
+  else if (recoveryDebt < 25) expectedRecoveryDays = 2;
+  else if (recoveryDebt < 40) expectedRecoveryDays = 3;
+  else expectedRecoveryDays = 4;
+
+  const hrvValues = wellness
+    .slice(-4)
+    .map((w) => w.hrv)
+    .filter((v) => v != null);
+  const hrv3daySlope =
+    hrvValues.length >= 2 ? hrvValues[hrvValues.length - 1] - hrvValues[0] : 0;
+
+  let response;
+  if (recentLoad > 150) response = "EXCESSIVE";
+  else if (recentLoad > 70 && hrv3daySlope < 0) response = "DELAYED";
+  else if (recentLoad > 50 && tsb < -20) response = "BLUNTED";
+  else response = "NORMAL";
+
+  return {
+    recoveryDebt,
+    expectedRecoveryDays,
+    previous48h: {
+      cumulativeStress: Math.round(recentLoad),
+      response,
+    },
+  };
+};
+
+const classifyYesterdayWorkout = (activities, yesterday) => {
+  const activity = activities.find((a) => a.date === yesterday);
+  if (!activity) return { intensity: "REST", duration: 0, impact: "MINIMAL" };
+
+  const hrZones = activity.hr_zone_times_seconds ?? [];
+  const highHRTime = (hrZones[2] ?? 0) + (hrZones[3] ?? 0) + (hrZones[4] ?? 0);
+  const load = activity.training_load ?? 0;
+  const durationMins = Math.round((activity.moving_time_seconds ?? 0) / 60);
+  const highHRRatio = durationMins > 0 ? highHRTime / (durationMins * 60) : 0;
+
+  let intensity;
+  if (highHRTime > 20 * 60 || highHRRatio > 0.3) intensity = "VERY_HIGH";
+  else if (highHRTime > 10 * 60 || highHRRatio > 0.15) intensity = "HIGH";
+  else if (load > 60) intensity = "MODERATE";
+  else if (load > 0 || durationMins > 0) intensity = "LOW";
+  else intensity = "REST";
+
+  let impact;
+  if (load > 100) impact = "VERY_HIGH";
+  else if (load > 70) impact = "HIGH";
+  else if (load > 40) impact = "MODERATE";
+  else impact = "MINIMAL";
+
+  return { intensity, duration: durationMins, impact };
+};
+
+export const sanitizeData = (data, { yesterday } = {}) => {
   const sanitizedWellness = data.wellness.map((w) => ({
     date: w.id,
     ctl: w.ctl,
@@ -287,6 +358,12 @@ export const sanitizeData = (data) => {
     recovery: buildPhaseAverages(recoveryWeekWellness),
   };
 
+  const yesterdayWorkout = yesterday
+    ? classifyYesterdayWorkout(sanitizedActivities, yesterday)
+    : { intensity: "REST", duration: 0, impact: "MINIMAL" };
+
+  const loadAnalytics = computeLoadAnalytics(sanitizedActivities, sanitizedWellness, yesterday);
+
   return {
     wellness: sanitizedWellness,
     wellnessAnalytics,
@@ -294,5 +371,7 @@ export const sanitizeData = (data) => {
     currentWeekSummary,
     weeklyPhases,
     activities: sanitizedActivities,
+    yesterdayWorkout,
+    loadAnalytics,
   };
 };
